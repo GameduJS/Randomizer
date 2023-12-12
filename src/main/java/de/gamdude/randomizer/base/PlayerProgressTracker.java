@@ -2,17 +2,14 @@ package de.gamdude.randomizer.base;
 
 import de.gamdude.randomizer.base.structure.Platform;
 import de.gamdude.randomizer.world.PlatformLoader;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public class PlayerProgressTracker {
 
-    private final GameDispatcher gameDispatcher;
     private final PlatformLoader platformLoader;
 
     public PlayerProgressTracker(GameDispatcher gameDispatcher) {
-        this.gameDispatcher = gameDispatcher;
         this.platformLoader = gameDispatcher.getPlatformLoader();
     }
 

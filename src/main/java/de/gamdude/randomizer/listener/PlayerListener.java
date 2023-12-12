@@ -19,18 +19,18 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onHunger(FoodLevelChangeEvent event) {
-        event.setCancelled(true);
+        event.setCancelled(!gameDispatcher.getConfig().getProperty("canGetHungry").getAsBoolean());
     }
 
     @EventHandler
     public void onDeath(PlayerDeathEvent event) {
-        event.deathMessage(miniMessage.deserialize("<gray>You just died!"));
         event.setCancelled(true);
         event.getPlayer().spigot().respawn();
     }
 
     @EventHandler
     public void onRespawn(PlayerRespawnEvent event) {
+        event.getPlayer().sendMessage(miniMessage.deserialize("<gray>You just died!"));
         event.setRespawnLocation(gameDispatcher.getPlatformLoader().getPlatform(event.getPlayer().getUniqueId()).getPlatformLocation());
     }
 }

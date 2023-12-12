@@ -1,6 +1,8 @@
 package de.gamdude.randomizer.listener;
 
+import de.gamdude.randomizer.Randomizer;
 import de.gamdude.randomizer.ui.base.Menu;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -8,7 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.*;
 import org.bukkit.inventory.InventoryHolder;
 
-public class MenuListener implements Listener {
+public record MenuListener(Randomizer plugin) implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     private void onClick(InventoryClickEvent event) {
@@ -33,6 +35,7 @@ public class MenuListener implements Listener {
     @EventHandler 
     private void onClose(InventoryCloseEvent event) {
         final InventoryHolder holder = event.getInventory().getHolder();
-        if (holder instanceof Menu) ((Menu) holder).onClose((Player)event.getPlayer());
+        if (holder instanceof Menu menu)
+            Bukkit.getScheduler().runTaskLater(plugin, () -> menu.onClose((Player) event.getPlayer()), 1);
     }
 }

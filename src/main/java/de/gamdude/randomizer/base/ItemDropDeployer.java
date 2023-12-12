@@ -17,7 +17,7 @@ public class ItemDropDeployer {
     private final GameDispatcher gameDispatcher;
 
     private final List<Material> ignoredMaterials;
-    private final Material[] MATERIALS;
+    private Material[] MATERIALS;
     private final Random RANDOM = ThreadLocalRandom.current();
 
     private int dropDelay;
@@ -26,16 +26,16 @@ public class ItemDropDeployer {
     public ItemDropDeployer(GameDispatcher gameDispatcher) {
         this.gameDispatcher = gameDispatcher;
         this.ignoredMaterials = new ArrayList<>();
-        this.loadConfig();
-        MATERIALS = Arrays.stream(Material.values()).filter(Predicate.not(Material::isLegacy)).filter(Predicate.not(ignoredMaterials::contains)).toArray(Material[]::new);
     }
 
-    private void loadConfig() {
+    public void loadConfig() {
         for (JsonElement jsonElement : gameDispatcher.getConfig().getProperty("excludedItems").getAsJsonArray())
             ignoredMaterials.add(Material.valueOf(jsonElement.getAsString()));
 
         dropDelay = gameDispatcher.getConfig().getProperty("firstItemDropDelay").getAsInt();
         dropCooldown = gameDispatcher.getConfig().getProperty("itemCooldown").getAsInt();
+
+        MATERIALS = Arrays.stream(Material.values()).filter(Predicate.not(Material::isLegacy)).filter(Material::isItem).filter(Predicate.not(ignoredMaterials::contains)).toArray(Material[]::new);
     }
 
     public void dropItem(Location location) {
@@ -45,11 +45,9 @@ public class ItemDropDeployer {
     }
 
     public void dropQueue(long seconds) {
-        // Wait dropDelay
-        if(seconds -  dropDelay < 0)
+        if (seconds - dropDelay < 0) // Wait dropDelay
             return;
-        // Perform action every dropCooldown seconds
-        if((seconds - dropDelay) % dropCooldown == 0)
+        if ((seconds - dropDelay) % dropCooldown == 0)  // Perform action every dropCooldown seconds
             gameDispatcher.getPlatformLoader().getPlatforms().stream().map(Map.Entry::getValue).filter(Platform::isEnabled).map(Platform::getPlatformLocation).forEach(this::dropItem);
     }
 

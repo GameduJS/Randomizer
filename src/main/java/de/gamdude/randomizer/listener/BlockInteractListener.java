@@ -2,12 +2,14 @@ package de.gamdude.randomizer.listener;
 
 import com.destroystokyo.paper.event.block.BlockDestroyEvent;
 import de.gamdude.randomizer.base.GameDispatcher;
+import org.bukkit.Material;
 import org.bukkit.block.data.Directional;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockDropItemEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +29,7 @@ public class BlockInteractListener implements Listener {
     public void onBreak(BlockBreakEvent event) {
         if(canBreakBlock)
             return;
-        if(placedBlocksHashList.contains(event.getBlock().getLocation().hashCode()))
+        if(placedBlocksHashList.contains(event.getBlock().getLocation().hashCode()) && event.getBlock().getType() != Material.BARRIER)
             event.setCancelled(true);
     }
 
@@ -37,6 +39,7 @@ public class BlockInteractListener implements Listener {
         int zOff = (event.getBlock().getBlockData() instanceof Directional directional) ? directional.getFacing().getModZ() : 0;
 
         gameDispatcher.getPlayerProgressHandle().placeBlock(event.getPlayer(), event.getBlock().getLocation().add(0, 0, zOff));
+        gameDispatcher.getLeaderboardHandler().updateLeaderboard(event.getPlayer().getUniqueId());
     }
 
     @EventHandler

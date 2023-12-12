@@ -12,13 +12,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import net.md_5.bungee.api.ChatColor;
 
 public class ItemBuilder {
 
 	private final MiniMessage miniMessage = MiniMessage.miniMessage();
 
-	private final Material material;
+	private Material material;
 	private Component displayName;
 	private final ItemStack item;
 	private final ItemMeta meta;
@@ -38,8 +37,9 @@ public class ItemBuilder {
 		this.lore = new ArrayList<Component>();
 	}
 
-	public Material getMaterial() {
-		return this.material;
+	public ItemBuilder setMaterial(Material material) {
+		this.material = material;
+		return this;
 	}
 
 	public ItemBuilder setDisplayName(String displayName) {

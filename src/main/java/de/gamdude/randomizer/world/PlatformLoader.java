@@ -14,9 +14,9 @@ public class PlatformLoader {
     private final Map<UUID, Platform> playerPlatformLocationMap = new HashMap<>();
 
 
-    public Platform createPlatform(Player player, int playerCount) {
-        if(playerPlatformLocationMap.containsKey(player.getUniqueId()))
-            return getPlatform(player.getUniqueId());
+    public Platform createPlatform(UUID uuid, int playerCount) {
+        if(playerPlatformLocationMap.containsKey(uuid))
+            return getPlatform(uuid);
         World world = Objects.requireNonNull(Bukkit.getWorld("world"), "Could not load 'world'");
 
         int xCoordinate = 7 + 16 * (playerCount - 1);
@@ -29,8 +29,8 @@ public class PlatformLoader {
         }
 
         Location location =  new Location(world, xCoordinate, 64, 0, 0, 0).toCenterLocation();
-        Platform platform = new Platform(player.getUniqueId(), location);
-        this.playerPlatformLocationMap.put(player.getUniqueId(), platform);
+        Platform platform = new Platform(uuid, location);
+        this.playerPlatformLocationMap.put(uuid, platform);
 
         return platform;
     }

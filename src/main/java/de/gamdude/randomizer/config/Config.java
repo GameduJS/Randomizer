@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.plugin.Plugin;
 
@@ -40,7 +41,7 @@ public class Config {
                 properties.put(entry.getKey(), entry.getValue());
             }
         } catch ( IOException e ) {
-            e.printStackTrace();
+            Bukkit.getLogger().warning(e.getMessage());
         }
     }
 
@@ -87,7 +88,8 @@ public class Config {
         try (FileWriter fileWriter = new FileWriter(file)) {
             fileWriter.write(content);
         } catch (IOException e) {
-            e.printStackTrace();
+            Bukkit.getLogger().warning("Could not write to file: ");
+            Bukkit.getLogger().warning(e.getMessage());
         }
     }
 
@@ -95,8 +97,9 @@ public class Config {
         Map<String, Object> defaultProperties = new HashMap<>();
         defaultProperties.put("itemCooldown", 15);
         defaultProperties.put("firstItemDropDelay", 5);
-        defaultProperties.put("excludedItems", new Material[]{Material.CAVE_AIR, Material.VOID_AIR});
+        defaultProperties.put("excludedItems", new String[]{"LIGHT"});
         defaultProperties.put("canBreakBlock", true);
+        defaultProperties.put("canGetHungry", false);
 
         defaultProperties.forEach((key, object) -> {
             if(!hasProperty(key))

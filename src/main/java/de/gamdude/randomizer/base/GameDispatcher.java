@@ -2,9 +2,10 @@ package de.gamdude.randomizer.base;
 
 import de.gamdude.randomizer.Randomizer;
 import de.gamdude.randomizer.config.Config;
-import de.gamdude.randomizer.ui.RandomizerScoreboard;
+import de.gamdude.randomizer.ui.visuals.RandomizerScoreboard;
 import de.gamdude.randomizer.world.PlatformLoader;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 
 public class GameDispatcher {
@@ -16,6 +17,7 @@ public class GameDispatcher {
     private final PlatformLoader platformLoader;
     private final RandomizerScoreboard randomizerScoreboard;
     private final PlayerProgressTracker playerProgressHandle;
+    private final LeaderboardHandler leaderboardHandler;
 
     private long taskID;
     private int seconds;
@@ -33,6 +35,7 @@ public class GameDispatcher {
         this.platformLoader = new PlatformLoader();
         this.playerProgressHandle = new PlayerProgressTracker(this);
         this.randomizerScoreboard = new RandomizerScoreboard(this);
+        this.leaderboardHandler = new LeaderboardHandler(this);
 
         startScheduler();
     }
@@ -45,21 +48,29 @@ public class GameDispatcher {
             // playing
             if(state == 1) {
                 itemDropDeployer.dropQueue(seconds);
+                Bukkit.getOnlinePlayers().forEach(randomizerScoreboard::updateScoreboard);
+                seconds++;
             }
-
-            Bukkit.getOnlinePlayers().forEach(randomizerScoreboard::updateScoreboard);
-            seconds++;
         }, 0, 20);
     }
 
     public void loadConfig() {
-        // load config values
+        itemDropDeployer.loadConfig();
     }
 
     public void startGame() {
         if(state != 0)
             return;
+        loadConfig();
+        Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).forEach(leaderboardHandler::updateLeaderboard);
         this.state = 1;
+    }
+
+    public void pause() {
+        if(state == 2)
+            state = 1;
+        else if(state == 1)
+            state = 2;
     }
 
     public int getState() {
@@ -74,15 +85,15 @@ public class GameDispatcher {
         return playerProgressHandle;
     }
 
-    public ItemDropDeployer getItemDropDeployer() {
-        return itemDropDeployer;
-    }
-
     public PlatformLoader getPlatformLoader() {
         return platformLoader;
     }
 
     public RandomizerScoreboard getRandomizerScoreboard() {
         return randomizerScoreboard;
+    }
+
+    public LeaderboardHandler getLeaderboardHandler() {
+        return leaderboardHandler;
     }
 }
