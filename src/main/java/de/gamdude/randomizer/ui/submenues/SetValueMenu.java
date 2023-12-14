@@ -1,4 +1,4 @@
-package de.gamdude.randomizer.ui;
+package de.gamdude.randomizer.ui.submenues;
 
 import de.gamdude.randomizer.config.Config;
 import de.gamdude.randomizer.ui.base.ChildMenu;

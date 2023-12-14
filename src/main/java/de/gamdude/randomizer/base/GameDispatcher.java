@@ -21,6 +21,7 @@ public class GameDispatcher {
 
     private long taskID;
     private int seconds;
+    private int timeToPlay;
     /**
      * 0 - not started
      * 1 - started / running
@@ -47,8 +48,11 @@ public class GameDispatcher {
         this.taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
             // playing
             if(state == 1) {
+                if(seconds == timeToPlay)
+                    stopGame();
                 itemDropDeployer.dropQueue(seconds);
                 Bukkit.getOnlinePlayers().forEach(randomizerScoreboard::updateScoreboard);
+
                 seconds++;
             }
         }, 0, 20);
@@ -56,6 +60,8 @@ public class GameDispatcher {
 
     public void loadConfig() {
         itemDropDeployer.loadConfig();
+        randomizerScoreboard.loadConfig();
+        this.timeToPlay = config.getProperty("playTime").getAsInt();
     }
 
     public void startGame() {
@@ -71,6 +77,15 @@ public class GameDispatcher {
             state = 1;
         else if(state == 1)
             state = 2;
+    }
+
+    public void stopGame() {
+        state = 0;
+        // announce player
+    }
+
+    public int getSecondsPlayed() {
+        return seconds;
     }
 
     public int getState() {

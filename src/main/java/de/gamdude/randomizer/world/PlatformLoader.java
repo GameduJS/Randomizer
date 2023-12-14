@@ -5,14 +5,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.entity.Player;
 
 import java.util.*;
 
 public class PlatformLoader {
 
     private final Map<UUID, Platform> playerPlatformLocationMap = new HashMap<>();
-
 
     public Platform createPlatform(UUID uuid, int playerCount) {
         if(playerPlatformLocationMap.containsKey(uuid))

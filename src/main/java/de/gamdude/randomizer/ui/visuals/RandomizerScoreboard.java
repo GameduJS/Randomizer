@@ -2,6 +2,7 @@ package de.gamdude.randomizer.ui.visuals;
 
 import de.gamdude.randomizer.base.GameDispatcher;
 import de.gamdude.randomizer.ui.base.LeaderboardObject;
+import de.gamdude.randomizer.utils.TimeConverter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -21,15 +22,20 @@ public class RandomizerScoreboard {
 
     private final MiniMessage miniMessage = MiniMessage.miniMessage();
     private final GameDispatcher gameDispatcher;
+    private int timeToPlay;
 
     public RandomizerScoreboard(GameDispatcher gameDispatcher) {
         this.gameDispatcher = gameDispatcher;
     }
 
+    public void loadConfig() {
+        this.timeToPlay = gameDispatcher.getConfig().getProperty("playTime").getAsInt();
+    }
+
     // Care attention for ties
     public void updateScoreboard(Player player) {
-        Team playerCount = player.getScoreboard().getTeam("playerCount");
-        playerCount.suffix(miniMessage.deserialize("<yellow>" + Bukkit.getOnlinePlayers().size()));
+        Team playerCount = player.getScoreboard().getTeam("timePlay");
+        playerCount.suffix(miniMessage.deserialize("<yellow>" + TimeConverter.getTimeString(timeToPlay - gameDispatcher.getSecondsPlayed())));
 
         Team blocksBuiltTeam = player.getScoreboard().getTeam("blocksBuilt");
         blocksBuiltTeam.suffix(miniMessage.deserialize("<yellow>" + gameDispatcher.getPlayerProgressHandle().getBlocksBuilt(player)));
@@ -58,8 +64,8 @@ public class RandomizerScoreboard {
         sidebar.setDisplaySlot(DisplaySlot.SIDEBAR);
 
         newScore(scoreboard, sidebar, "deco1", "<light_purple>˂--------------------------˃", 16);
-        newScore(scoreboard, sidebar, "playerCountTitle", "<gray><b>Online Players:", 15);
-        newScore(scoreboard, sidebar, "playerCount", "<dark_gray> »", 14);
+        newScore(scoreboard, sidebar, "timePlayTitle", "<gray><b>Time:", 15);
+        newScore(scoreboard, sidebar, "timePlay", "<dark_gray> »", 14);
         newScore(scoreboard, sidebar, "space1" ,"   ", 13);
         newScore(scoreboard, sidebar, "blocksBuiltTitle", "<gray><b>Blocks Placed:", 12);
         newScore(scoreboard, sidebar, "blocksBuilt", "<dark_gray> »", 11);

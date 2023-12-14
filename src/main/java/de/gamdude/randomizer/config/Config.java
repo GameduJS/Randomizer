@@ -100,6 +100,7 @@ public class Config {
         defaultProperties.put("excludedItems", new String[]{"LIGHT"});
         defaultProperties.put("canBreakBlock", true);
         defaultProperties.put("canGetHungry", false);
+        defaultProperties.put("playTime", 900);
 
         defaultProperties.forEach((key, object) -> {
             if(!hasProperty(key))
