@@ -1,2 +1,2 @@
 # Randomizer
-Minecraft Paper Plugin Minigame
+Minecraft Paper Plugin Minigame (WIP)
