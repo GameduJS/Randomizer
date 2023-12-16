@@ -35,8 +35,8 @@ public class GameDispatcher {
         this.itemDropDeployer = new ItemDropDeployer(this);
         this.platformLoader = new PlatformLoader();
         this.playerProgressHandle = new PlayerProgressTracker(this);
-        this.randomizerScoreboard = new RandomizerScoreboard(this);
         this.leaderboardHandler = new LeaderboardHandler(this);
+        this.randomizerScoreboard = new RandomizerScoreboard(this);
 
         startScheduler();
     }

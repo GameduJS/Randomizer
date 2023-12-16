@@ -7,12 +7,10 @@ import java.util.*;
 
 public class LeaderboardHandler {
 
-    private final GameDispatcher gameDispatcher;
     private final PlatformLoader platformLoader;
     private final Map<UUID, Integer> positionPlayerMap;
 
     public LeaderboardHandler(GameDispatcher gameDispatcher) {
-        this.gameDispatcher = gameDispatcher;
         this.platformLoader = gameDispatcher.getPlatformLoader();
         this.positionPlayerMap = new HashMap<>();
     }

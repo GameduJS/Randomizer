@@ -1,6 +1,7 @@
 package de.gamdude.randomizer.ui.visuals;
 
 import de.gamdude.randomizer.base.GameDispatcher;
+import de.gamdude.randomizer.base.LeaderboardHandler;
 import de.gamdude.randomizer.ui.base.LeaderboardObject;
 import de.gamdude.randomizer.utils.TimeConverter;
 import net.kyori.adventure.text.Component;
@@ -22,10 +23,12 @@ public class RandomizerScoreboard {
 
     private final MiniMessage miniMessage = MiniMessage.miniMessage();
     private final GameDispatcher gameDispatcher;
+    private final LeaderboardHandler leaderboardHandler;
     private int timeToPlay;
 
     public RandomizerScoreboard(GameDispatcher gameDispatcher) {
         this.gameDispatcher = gameDispatcher;
+        this.leaderboardHandler = gameDispatcher.getLeaderboardHandler();
     }
 
     public void loadConfig() {
@@ -40,21 +43,25 @@ public class RandomizerScoreboard {
         Team blocksBuiltTeam = player.getScoreboard().getTeam("blocksBuilt");
         blocksBuiltTeam.suffix(miniMessage.deserialize("<yellow>" + gameDispatcher.getPlayerProgressHandle().getBlocksBuilt(player)));
 
-        List<UUID> topPlayerList = gameDispatcher.getLeaderboardHandler().getTopPlayers().getPlayerList();
+        List<UUID> topPlayerList = leaderboardHandler.getTopPlayers().getPlayerList();
+        int rank = 0;
         for(int i = 1; i <= 3; ++i) {
             Team topPlayersTeam = player.getScoreboard().getTeam("topPlayer" + i);
             if(topPlayerList.size() >= i) {
                 UUID topPlayerUUID = topPlayerList.get(i - 1);
                 OfflinePlayer topPlayer = Bukkit.getOfflinePlayer(topPlayerUUID);
                 String playerString = ( (topPlayerUUID == player.getUniqueId()) ? "<bold>" : "" ) + topPlayer.getName();
+                rank = leaderboardHandler.getPosition(topPlayerUUID) - 1;
                 topPlayersTeam.suffix(miniMessage.deserialize(playerString + " <dark_gray>► <yellow>" + gameDispatcher.getPlatformLoader().getPlatform(topPlayerUUID).getBlocksBuilt()));
             } else {
                 topPlayersTeam.suffix(miniMessage.deserialize("<gray> ✘"));
             }
+            rank+=1;
+            topPlayersTeam.prefix(miniMessage.deserialize(getTopPlayersPrefix(rank)));
         }
 
         Team rankPlayerTeam = playerCount.getScoreboard().getTeam("rankPlayer");
-        rankPlayerTeam.suffix(miniMessage.deserialize("<yellow>" + gameDispatcher.getLeaderboardHandler().getPosition(player.getUniqueId())));
+        rankPlayerTeam.suffix(miniMessage.deserialize("<yellow>" + leaderboardHandler.getPosition(player.getUniqueId())));
     }
 
     public Scoreboard getScoreboard() {
