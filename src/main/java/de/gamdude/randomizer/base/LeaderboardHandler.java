@@ -10,6 +10,7 @@ public class LeaderboardHandler {
     private final PlatformLoader platformLoader;
     private final Map<UUID, Integer> positionPlayerMap;
 
+    // todo: do caching
     public LeaderboardHandler(GameDispatcher gameDispatcher) {
         this.platformLoader = gameDispatcher.getPlatformLoader();
         this.positionPlayerMap = new HashMap<>();

@@ -5,7 +5,7 @@ main: de.gamdude.randomizer.Randomizer
 api-version: 1.20
 
 commands:
-  state:
+  game:
     description: Set state of the game
-    usage: §7Use /state <start/stop/pause>
-    permission: randomizer.state
+    usage: §7Use /game <start/stop/pause/setting>
+    permission: randomizer.game

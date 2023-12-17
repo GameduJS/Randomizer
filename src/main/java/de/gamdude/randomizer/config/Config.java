@@ -101,6 +101,7 @@ public class Config {
         defaultProperties.put("canBreakBlock", true);
         defaultProperties.put("canGetHungry", false);
         defaultProperties.put("playTime", 900);
+        defaultProperties.put("spawnWithDefaults", true);
 
         defaultProperties.forEach((key, object) -> {
             if(!hasProperty(key))

@@ -2,17 +2,20 @@ package de.gamdude.randomizer.commands;
 
 import de.gamdude.randomizer.base.GameDispatcher;
 import de.gamdude.randomizer.ui.ConfigMenu;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
+import org.bukkit.command.*;
 import org.bukkit.entity.Player;
+import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-public class StateCommand implements CommandExecutor {
+import java.util.ArrayList;
+import java.util.List;
+
+public class GameCommand implements TabExecutor {
 
     private final GameDispatcher gameDispatcher;
 
-    public StateCommand(GameDispatcher gameDispatcher) {
+    public GameCommand(GameDispatcher gameDispatcher) {
         this.gameDispatcher = gameDispatcher;
     }
 
@@ -26,10 +29,20 @@ public class StateCommand implements CommandExecutor {
         switch (state) {
             case "setting" -> ((Player) sender).openInventory(new ConfigMenu(gameDispatcher).getInventory());
             case "start" -> gameDispatcher.startGame();
-            case "stop" -> gameDispatcher.loadConfig();
+            case "stop" -> gameDispatcher.stopGame();
             case "pause" -> gameDispatcher.pause();
         }
 
         return true;
+    }
+
+    private static final String[] COMMANDS = {"setting", "start", "stop", "pause"};
+
+    @Override
+    public @Nullable List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
+        final List<String> completions = new ArrayList<>();
+        if(args.length == 1)
+            StringUtil.copyPartialMatches(args[0], List.of(COMMANDS), completions);
+        return completions;
     }
 }

@@ -32,6 +32,11 @@ public class ConfigMenu extends Menu {
                 inventory.setItem(28, getCanGetHungryItem());
             }
             case 29 -> player.openInventory(new TimeToPlayMenu(config, this).getInventory());
+            case 30 -> {
+                boolean b = config.getProperty("spawnWithDefaults").getAsBoolean();
+                config.addProperty("spawnWithDefaults", !b);
+                inventory.setItem(30, getSpawnWithDefaultsItem());
+            }
         }
         return true;
     }
@@ -47,6 +52,7 @@ public class ConfigMenu extends Menu {
                 .setDisplayName("<dark_gray>Play Time").setLore("").setLore("<gray>Sets the value for the game")
                 .setLore("<gray>Current: <yellow>" + TimeConverter.getTimeString(config.getProperty("playTime").getAsInt()))
                 .build());
+        inventory.setItem(30, getSpawnWithDefaultsItem());
 
         fill(new ItemBuilder(Material.WHITE_STAINED_GLASS_PANE).setDisplayName("").addItemFlag(ItemFlag.HIDE_ATTRIBUTES).build());
     }
@@ -56,15 +62,26 @@ public class ConfigMenu extends Menu {
 
     }
 
-    public ItemStack getCanGetHungryItem() {
+    private ItemStack getSpawnWithDefaultsItem() {
+        boolean spawnWithDefaults = config.getProperty("spawnWithDefaults").getAsBoolean();
+
+        if(spawnWithDefaults)
+            return new ItemBuilder(Material.OAK_SAPLING).setDisplayName("<green>Enabled <gray>Starter Items").setLore("")
+                    .setLore("<gray>All players will receive a sapling and dirt at the beginning of the round").build();
+        else
+            return new ItemBuilder(Material.FLOWER_POT).setDisplayName("<red>Disabled <gray>Starter Items").setLore("")
+                    .setLore("<gray>All players will receive a sapling and dirt at the beginning of the round").build();
+    }
+
+    private ItemStack getCanGetHungryItem() {
         boolean canGetHungry = config.getProperty("canGetHungry").getAsBoolean();
 
         if(!canGetHungry) // false
-            return new ItemBuilder(Material.COOKED_BEEF).setDisplayName("<red>Disabled <dark_gray>hunger")
-                    .setLore("").setLore("<gray>Click to <green>enable <gray>hunger").addItemFlag(ItemFlag.HIDE_ATTRIBUTES).build();
+            return new ItemBuilder(Material.COOKED_BEEF).setDisplayName("<red>Disabled <dark_gray>Hunger")
+                    .setLore("").setLore("<gray>Click to <green>enable").addItemFlag(ItemFlag.HIDE_ATTRIBUTES).build();
         else
-            return new ItemBuilder(Material.BEEF).setDisplayName("<green>Enabled <dark_gray>hunger")
-                    .setLore("").setLore("<gray>Click to <red>disable <gray>hunger").addItemFlag(ItemFlag.HIDE_ATTRIBUTES).build();
+            return new ItemBuilder(Material.BEEF).setDisplayName("<green>Enabled <dark_gray>Hunger")
+                    .setLore("").setLore("<gray>Click to <red>disable").addItemFlag(ItemFlag.HIDE_ATTRIBUTES).build();
     }
 
 }

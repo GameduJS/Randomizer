@@ -4,8 +4,14 @@ import de.gamdude.randomizer.Randomizer;
 import de.gamdude.randomizer.config.Config;
 import de.gamdude.randomizer.ui.visuals.RandomizerScoreboard;
 import de.gamdude.randomizer.world.PlatformLoader;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import java.util.UUID;
 
 
 public class GameDispatcher {
@@ -68,7 +74,18 @@ public class GameDispatcher {
         if(state != 0)
             return;
         loadConfig();
-        Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).forEach(leaderboardHandler::updateLeaderboard);
+
+        boolean spawnWithDefaults = config.getProperty("spawnWithDefaults").getAsBoolean();
+
+        Bukkit.getOnlinePlayers().forEach(player-> {
+            leaderboardHandler.updateLeaderboard(player.getUniqueId());
+
+            if(spawnWithDefaults) {
+                player.getInventory().setItem(0, new ItemStack(Material.DIRT));
+                player.getInventory().setItem(1, new ItemStack(Material.OAK_SAPLING));
+            }
+        });
+
         this.state = 1;
     }
 
@@ -81,7 +98,12 @@ public class GameDispatcher {
 
     public void stopGame() {
         state = 0;
-        // announce player
+        UUID topPlayerID = getLeaderboardHandler().getTopPlayers().getPlayerList().get(0);
+        Bukkit.broadcast(MiniMessage.miniMessage().deserialize("<color:#f878ff>Randomizer <dark_gray>| <yellow>" + Bukkit.getOfflinePlayer(topPlayerID).getName()
+                 + " <gray>(<yellow>"+ playerProgressHandle.getBlocksBuilt(topPlayerID) + "<gray>) has won the race!"));
+
+        Bukkit.broadcast(MiniMessage.miniMessage().deserialize("<color:#f878ff>Randomizer <dark_gray>| <red>Server will shutdown in 10 seconds!"));
+        Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, Bukkit::shutdown, 200);
     }
 
     public int getSecondsPlayed() {

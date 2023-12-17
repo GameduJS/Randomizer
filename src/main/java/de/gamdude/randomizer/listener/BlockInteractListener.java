@@ -2,8 +2,12 @@ package de.gamdude.randomizer.listener;
 
 import com.destroystokyo.paper.event.block.BlockDestroyEvent;
 import de.gamdude.randomizer.base.GameDispatcher;
+import net.kyori.adventure.text.Component;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.data.Directional;
+import org.bukkit.block.data.type.Bed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -36,10 +40,11 @@ public class BlockInteractListener implements Listener {
     @EventHandler
     public void onBuild(BlockPlaceEvent event) {
         placedBlocksHashList.add(event.getBlock().getLocation().hashCode());
-        int zOff = (event.getBlock().getBlockData() instanceof Directional directional) ? directional.getFacing().getModZ() : 0;
+        int zOff = (event.getBlock().getType().data == Bed.class) ? 1 : 0;
+        Location placedBlockLocation = event.getBlock().getLocation().clone().add(0, 0, zOff);
 
-        gameDispatcher.getPlayerProgressHandle().placeBlock(event.getPlayer(), event.getBlock().getLocation().add(0, 0, zOff));
-        gameDispatcher.getLeaderboardHandler().updateLeaderboard(event.getPlayer().getUniqueId());
+        if(gameDispatcher.getPlayerProgressHandle().placeBlock(event.getPlayer(), placedBlockLocation))
+            gameDispatcher.getLeaderboardHandler().updateLeaderboard(event.getPlayer().getUniqueId());
     }
 
     @EventHandler

@@ -5,6 +5,8 @@ import de.gamdude.randomizer.world.PlatformLoader;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.util.UUID;
+
 public class PlayerProgressTracker {
 
     private final PlatformLoader platformLoader;
@@ -13,18 +15,20 @@ public class PlayerProgressTracker {
         this.platformLoader = gameDispatcher.getPlatformLoader();
     }
 
-    public void placeBlock(Player player, Location location) {
+    public boolean placeBlock(Player player, Location location) {
         Platform platform = platformLoader.getPlatform(player.getUniqueId());
 
         double dz = location.clone().subtract(platform.getLastBlockBuilt()).z();
         if(dz>=1) {
             platform.setLastBlockBuilt(location);
             platform.increaseBlocksBuilt();
+            return true;
         }
+        return false;
     }
 
-    public int getBlocksBuilt(Player player) {
-        return platformLoader.getPlatform(player.getUniqueId()).getBlocksBuilt();
+    public int getBlocksBuilt(UUID playerID) {
+        return platformLoader.getPlatform(playerID).getBlocksBuilt();
     }
 
 }

@@ -41,7 +41,7 @@ public class RandomizerScoreboard {
         playerCount.suffix(miniMessage.deserialize("<yellow>" + TimeConverter.getTimeString(timeToPlay - gameDispatcher.getSecondsPlayed())));
 
         Team blocksBuiltTeam = player.getScoreboard().getTeam("blocksBuilt");
-        blocksBuiltTeam.suffix(miniMessage.deserialize("<yellow>" + gameDispatcher.getPlayerProgressHandle().getBlocksBuilt(player)));
+        blocksBuiltTeam.suffix(miniMessage.deserialize("<yellow>" + gameDispatcher.getPlayerProgressHandle().getBlocksBuilt(player.getUniqueId())));
 
         List<UUID> topPlayerList = leaderboardHandler.getTopPlayers().getPlayerList();
         int rank = 0;

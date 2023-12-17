@@ -1,19 +1,9 @@
 package de.gamdude.randomizer.utils;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 
 public class TimeConverter {
-
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-
-    static {
-        dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-    }
-
     public static String getTimeString(int seconds) {
-        return dateFormat.format(new Date(seconds * 1000L));
+        return DurationFormatUtils.formatDuration(seconds * 1000L, "HH:mm:ss", true);
     }
-
 }
