@@ -36,7 +36,7 @@ public class PlayerMoveListener implements Listener {
         if(player.getGameMode() != GameMode.SURVIVAL)
             return;
 
-        if(gameDispatcher.getState() != 1) {
+        if(gameDispatcher.getState() == 0) {
             if(event.hasChangedBlock())
                 event.setCancelled(true);
         }

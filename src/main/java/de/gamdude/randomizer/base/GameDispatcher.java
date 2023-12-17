@@ -4,11 +4,9 @@ import de.gamdude.randomizer.Randomizer;
 import de.gamdude.randomizer.config.Config;
 import de.gamdude.randomizer.ui.visuals.RandomizerScoreboard;
 import de.gamdude.randomizer.world.PlatformLoader;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
@@ -32,6 +30,7 @@ public class GameDispatcher {
      * 0 - not started
      * 1 - started / running
      * 2 - paused
+     * 3 - end
      */
     private int state;
 
@@ -71,7 +70,7 @@ public class GameDispatcher {
     }
 
     public void startGame() {
-        if(state != 0)
+        if(state > 0)
             return;
         loadConfig();
 
@@ -97,7 +96,7 @@ public class GameDispatcher {
     }
 
     public void stopGame() {
-        state = 0;
+        state = 3;
         UUID topPlayerID = getLeaderboardHandler().getTopPlayers().getPlayerList().get(0);
         Bukkit.broadcast(MiniMessage.miniMessage().deserialize("<color:#f878ff>Randomizer <dark_gray>| <yellow>" + Bukkit.getOfflinePlayer(topPlayerID).getName()
                  + " <gray>(<yellow>"+ playerProgressHandle.getBlocksBuilt(topPlayerID) + "<gray>) has won the race!"));
