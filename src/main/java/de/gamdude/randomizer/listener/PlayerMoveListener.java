@@ -30,7 +30,7 @@ public class PlayerMoveListener implements Listener {
             player.teleport(platformLoader.getPlatform(player.getUniqueId()).getPlatformLocation());
             player.setVelocity(new Vector(0,0,0));
             player.setFallDistance(0f);
-            Bukkit.broadcast(Component.text("§dRandomizer §8| §7" + player.getName() + " hatte Angst vor seiner eigenen Brücke."));
+            Bukkit.broadcast(Component.text("§dRandomizer §8| §7" + player.getName() + " was afraid of his own bridge."));
         }
 
         if(player.getGameMode() != GameMode.SURVIVAL)

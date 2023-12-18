@@ -5,6 +5,7 @@ import de.gamdude.randomizer.base.GameDispatcher;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Bed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -44,10 +45,11 @@ public class BlockInteractListener implements Listener {
             event.setCancelled(true);
             return;
         }
+        Block block = event.getBlock();
 
-        placedBlocksHashList.add(event.getBlock().getLocation().hashCode());
-        int zOff = (event.getBlock().getType().data == Bed.class) ? 1 : 0;
-        Location placedBlockLocation = event.getBlock().getLocation().clone().add(0, 0, zOff);
+        placedBlocksHashList.add(block.getLocation().hashCode());
+        int zOff = (block.getType().data == Bed.class) ? ((Bed) block.getBlockData()).getFacing().getModZ() : 0;
+        Location placedBlockLocation = block.getLocation().clone().add(0, 0, zOff);
 
         if(gameDispatcher.getPlayerProgressHandle().placeBlock(event.getPlayer(), placedBlockLocation))
             gameDispatcher.getLeaderboardHandler().updateLeaderboard(event.getPlayer().getUniqueId());

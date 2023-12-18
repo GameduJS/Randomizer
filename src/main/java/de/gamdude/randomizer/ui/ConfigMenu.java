@@ -43,14 +43,14 @@ public class ConfigMenu extends Menu {
 
     @Override
     public void onOpen(Player player) {
-        ItemBuilder itemCooldownBuilder = new ItemBuilder(Material.CLOCK).setDisplayName("<dark_gray>Item Cooldown").setLore("").setLore("<gray>Set value for the").setLore("<gray>item cooldown").addItemFlag(ItemFlag.HIDE_ATTRIBUTES)
-                .setLore("<gray>Current value: <yellow>" + config.getProperty("itemCooldown").getAsInt());
+        ItemBuilder itemCooldownBuilder = new ItemBuilder(Material.CLOCK).setDisplayName("<gray>Item Cooldown").setLore("").setLore("<gray>Determine the cooldown for items to spawn.").addItemFlag(ItemFlag.HIDE_ATTRIBUTES)
+                .setLore("<gray>Current Cooldown: <yellow>" + config.getProperty("itemCooldown").getAsInt() + " seconds");
 
         inventory.setItem(10, itemCooldownBuilder.build());
         inventory.setItem(28, getCanGetHungryItem());
         inventory.setItem(29, new ItemBuilder(Material.COMPASS)
-                .setDisplayName("<dark_gray>Play Time").setLore("").setLore("<gray>Sets the value for the game")
-                .setLore("<gray>Current: <yellow>" + TimeConverter.getTimeString(config.getProperty("playTime").getAsInt()))
+                .setDisplayName("<gray>Playtime").setLore("").setLore("<gray>Determine the time for the game.")
+                .setLore("<gray>Current Time: <yellow>" + TimeConverter.getTimeString(config.getProperty("playTime").getAsInt()) + " seconds")
                 .build());
         inventory.setItem(30, getSpawnWithDefaultsItem());
 
@@ -65,23 +65,16 @@ public class ConfigMenu extends Menu {
     private ItemStack getSpawnWithDefaultsItem() {
         boolean spawnWithDefaults = config.getProperty("spawnWithDefaults").getAsBoolean();
 
-        if(spawnWithDefaults)
-            return new ItemBuilder(Material.OAK_SAPLING).setDisplayName("<green>Enabled <gray>Starter Items").setLore("")
-                    .setLore("<gray>All players will receive a sapling and dirt at the beginning of the round").build();
-        else
-            return new ItemBuilder(Material.FLOWER_POT).setDisplayName("<red>Disabled <gray>Starter Items").setLore("")
-                    .setLore("<gray>All players will receive a sapling and dirt at the beginning of the round").build();
+        return new ItemBuilder(spawnWithDefaults ? Material.OAK_SAPLING : Material.FLOWER_POT).setDisplayName("<gray>Starter Items")
+                .setLore("").setLore("<gray>All players will receive a sapling and dirt at the beginning of the round")
+                .setLore("<gray>Currently enabled: <yellow>" + spawnWithDefaults).build();
     }
 
     private ItemStack getCanGetHungryItem() {
         boolean canGetHungry = config.getProperty("canGetHungry").getAsBoolean();
-
-        if(!canGetHungry) // false
-            return new ItemBuilder(Material.COOKED_BEEF).setDisplayName("<red>Disabled <dark_gray>Hunger")
-                    .setLore("").setLore("<gray>Click to <green>enable").addItemFlag(ItemFlag.HIDE_ATTRIBUTES).build();
-        else
-            return new ItemBuilder(Material.BEEF).setDisplayName("<green>Enabled <dark_gray>Hunger")
-                    .setLore("").setLore("<gray>Click to <red>disable").addItemFlag(ItemFlag.HIDE_ATTRIBUTES).build();
+        return new ItemBuilder( canGetHungry ? Material.BEEF : Material.COOKED_BEEF).setDisplayName("<gray>Hunger Option")
+                .setLore("").setLore("<gray>Choose whether players should get hungry or not")
+                .setLore("<gray>Current Status: <yellow>" + canGetHungry).build();
     }
 
 }
