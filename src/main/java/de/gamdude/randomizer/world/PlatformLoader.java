@@ -1,5 +1,6 @@
 package de.gamdude.randomizer.world;
 
+import de.gamdude.randomizer.base.Handler;
 import de.gamdude.randomizer.base.structure.Platform;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -8,7 +9,7 @@ import org.bukkit.World;
 
 import java.util.*;
 
-public class PlatformLoader {
+public class PlatformLoader implements Handler {
 
     private final Map<UUID, Platform> playerPlatformLocationMap = new HashMap<>();
 

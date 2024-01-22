@@ -2,8 +2,8 @@ package de.gamdude.randomizer.listener;
 
 import de.gamdude.randomizer.base.structure.Platform;
 import de.gamdude.randomizer.base.GameDispatcher;
+import de.gamdude.randomizer.utils.MessageHandler;
 import de.gamdude.randomizer.world.PlatformLoader;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -14,26 +14,26 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 public class PlayerConnectionListener implements Listener {
 
-    private final MiniMessage miniMessage = MiniMessage.miniMessage();
     private final PlatformLoader platformLoader;
     private final GameDispatcher gameDispatcher;
 
     public PlayerConnectionListener(GameDispatcher gameDispatcher) {
         this.gameDispatcher = gameDispatcher;
-        this.platformLoader = gameDispatcher.getPlatformLoader();
+        this.platformLoader = gameDispatcher.getHandler(PlatformLoader.class);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
+        MessageHandler.registerLanguage(player);
 
         Platform platform = platformLoader.createPlatform(player.getUniqueId(), Bukkit.getOnlinePlayers().size());
         platform.setEnabled(true);
         player.teleport(platform.getPlatformLocation());
+        gameDispatcher.getRandomizerScoreboard().setScoreboard(player);
 
-        player.setScoreboard(gameDispatcher.getRandomizerScoreboard().getScoreboard());
-
-        event.joinMessage(miniMessage.deserialize("<color:#f878ff><b>Randomizer</b></color><dark_gray> | <yellow>" + player.getName() + " <gray>has <green>joined <gray>the race!"));
+        event.joinMessage(null);
+        Bukkit.getOnlinePlayers().forEach(onlinePlayer -> MessageHandler.sendMessage(onlinePlayer, "joinMessage", player.getName()));
     }
 
     @EventHandler
@@ -42,7 +42,8 @@ public class PlayerConnectionListener implements Listener {
         if(gameDispatcher.getState() == 1)
             platformLoader.getPlatform(player.getUniqueId()).setEnabled(false);
 
-        event.quitMessage(miniMessage.deserialize("<color:#f878ff><b>Randomizer</b></color> <dark_gray> | <yellow>" + player.getName() + " <gray>has <red>left <gray>the race!"));
+        event.quitMessage(null);
+        Bukkit.getOnlinePlayers().forEach(onlinePlayer -> MessageHandler.sendMessage(onlinePlayer, "leaveMessage", player.getName()));
     }
 
 }

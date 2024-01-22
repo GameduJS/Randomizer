@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.Style;
+import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -15,7 +18,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class ItemBuilder {
 
-	private final MiniMessage miniMessage = MiniMessage.miniMessage();
+	private final MiniMessage miniMessage = MiniMessage.builder()
+			.postProcessor(component -> component.decoration(TextDecoration.ITALIC, false)).build();
 
 	private Material material;
 	private Component displayName;

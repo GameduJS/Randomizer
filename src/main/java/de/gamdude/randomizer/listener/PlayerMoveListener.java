@@ -1,8 +1,8 @@
 package de.gamdude.randomizer.listener;
 
 import de.gamdude.randomizer.base.GameDispatcher;
+import de.gamdude.randomizer.utils.MessageHandler;
 import de.gamdude.randomizer.world.PlatformLoader;
-import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -19,7 +19,7 @@ public class PlayerMoveListener implements Listener {
 
     public PlayerMoveListener(GameDispatcher gameDispatcher) {
         this.gameDispatcher = gameDispatcher;
-        this.platformLoader = gameDispatcher.getPlatformLoader();
+        this.platformLoader = gameDispatcher.getHandler(PlatformLoader.class);
     }
 
     @EventHandler(priority = EventPriority.LOW)
@@ -30,7 +30,7 @@ public class PlayerMoveListener implements Listener {
             player.teleport(platformLoader.getPlatform(player.getUniqueId()).getPlatformLocation());
             player.setVelocity(new Vector(0,0,0));
             player.setFallDistance(0f);
-            Bukkit.broadcast(Component.text("§dRandomizer §8| §7" + player.getName() + " was afraid of his own bridge."));
+            Bukkit.getOnlinePlayers().forEach(onlinePlayer -> MessageHandler.sendMessage(onlinePlayer, "playerFell", player.getName()));
         }
 
         if(player.getGameMode() != GameMode.SURVIVAL)

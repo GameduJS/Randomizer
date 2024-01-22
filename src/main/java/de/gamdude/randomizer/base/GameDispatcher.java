@@ -1,14 +1,19 @@
 package de.gamdude.randomizer.base;
 
 import de.gamdude.randomizer.Randomizer;
+import de.gamdude.randomizer.base.goals.GoalHandler;
 import de.gamdude.randomizer.config.Config;
 import de.gamdude.randomizer.ui.visuals.RandomizerScoreboard;
+import de.gamdude.randomizer.utils.MessageHandler;
 import de.gamdude.randomizer.world.PlatformLoader;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
+import org.bukkit.GameRule;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 
@@ -17,15 +22,11 @@ public class GameDispatcher {
     private final Randomizer plugin;
     private final Config config;
 
-    private final ItemDropDeployer itemDropDeployer;
-    private final PlatformLoader platformLoader;
+    private final Map<Class<? extends Handler>, Handler> handlerMap;
     private final RandomizerScoreboard randomizerScoreboard;
-    private final PlayerProgressTracker playerProgressHandle;
-    private final LeaderboardHandler leaderboardHandler;
 
     private long taskID;
     private int seconds;
-    private int timeToPlay;
     /**
      * 0 - not started
      * 1 - started / running
@@ -34,16 +35,23 @@ public class GameDispatcher {
      */
     private int state;
 
-    public GameDispatcher(Randomizer plugin) {
+    public GameDispatcher(Randomizer plugin, Config config) {
         this.plugin = plugin;
-        this.config = plugin.getConfiguration();
-        this.itemDropDeployer = new ItemDropDeployer(this);
-        this.platformLoader = new PlatformLoader();
-        this.playerProgressHandle = new PlayerProgressTracker(this);
-        this.leaderboardHandler = new LeaderboardHandler(this);
-        this.randomizerScoreboard = new RandomizerScoreboard(this);
+        this.config = config;
+        this.handlerMap = new HashMap<>();
+        this.handlerMap.put(PlatformLoader.class, new PlatformLoader());
+        this.handlerMap.put(ItemDropDeployer.class, new ItemDropDeployer(this));
+        this.handlerMap.put(PlayerProgressTracker.class, new PlayerProgressTracker(this));
+        this.handlerMap.put(LeaderboardHandler.class, new LeaderboardHandler(this));
+        this.handlerMap.put(GoalHandler.class, new GoalHandler(this));
 
+        this.randomizerScoreboard = new RandomizerScoreboard(this);
         startScheduler();
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T extends Handler> T getHandler(Class<T> clazz) {
+        return (T) this.handlerMap.get(clazz);
     }
 
     public void startScheduler() {
@@ -53,20 +61,19 @@ public class GameDispatcher {
         this.taskID = Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, () -> {
             // playing
             if(state == 1) {
-                if(seconds == timeToPlay)
+                if(getHandler(GoalHandler.class).isFinished())
                     stopGame();
-                itemDropDeployer.dropQueue(seconds);
-                Bukkit.getOnlinePlayers().forEach(randomizerScoreboard::updateScoreboard);
-
+                getHandler(ItemDropDeployer.class).dropQueue(seconds);
+                Bukkit.getOnlinePlayers().forEach(player -> randomizerScoreboard.updateScoreboard());
                 seconds++;
             }
+
+
         }, 0, 20);
     }
 
-    public void loadConfig() {
-        itemDropDeployer.loadConfig();
-        randomizerScoreboard.loadConfig();
-        this.timeToPlay = config.getProperty("playTime").getAsInt();
+    private void loadConfig() {
+        this.handlerMap.values().forEach(handler -> handler.loadConfig(config));
     }
 
     public void startGame() {
@@ -75,9 +82,8 @@ public class GameDispatcher {
         loadConfig();
 
         boolean spawnWithDefaults = config.getProperty("spawnWithDefaults").getAsBoolean();
-
         Bukkit.getOnlinePlayers().forEach(player-> {
-            leaderboardHandler.updateLeaderboard(player.getUniqueId());
+            getHandler(LeaderboardHandler.class).updateLeaderboard(player.getUniqueId());
 
             if(spawnWithDefaults) {
                 player.getInventory().setItem(0, new ItemStack(Material.DIRT));
@@ -96,12 +102,16 @@ public class GameDispatcher {
     }
 
     public void stopGame() {
+        if(state == 0 || state == 3)
+            return;
         state = 3;
-        UUID topPlayerID = getLeaderboardHandler().getTopPlayers().getPlayerList().get(0);
-        Bukkit.broadcast(MiniMessage.miniMessage().deserialize("<color:#f878ff>Randomizer <dark_gray>| <yellow>" + Bukkit.getOfflinePlayer(topPlayerID).getName()
-                 + " <gray>(<yellow>"+ playerProgressHandle.getBlocksBuilt(topPlayerID) + "<gray>) has won the race!"));
+        UUID topPlayerID = getHandler(LeaderboardHandler.class).getTopPlayers().getPlayerList().get(0);
 
-        Bukkit.broadcast(MiniMessage.miniMessage().deserialize("<color:#f878ff>Randomizer <dark_gray>| <red>Server will shutdown in 10 seconds!"));
+        Bukkit.getOnlinePlayers().forEach(onlinePlayer -> {
+            MessageHandler.sendMessage(onlinePlayer, "playerWon", Bukkit.getOfflinePlayer(topPlayerID).getName(), getHandler(PlayerProgressTracker.class).getBlocksBuilt(topPlayerID)+ "");
+            MessageHandler.sendMessage(onlinePlayer, "serverShutdown");
+        });
+
         Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, Bukkit::shutdown, 200);
     }
 
@@ -117,19 +127,8 @@ public class GameDispatcher {
         return config;
     }
 
-    public PlayerProgressTracker getPlayerProgressHandle() {
-        return playerProgressHandle;
-    }
-
-    public PlatformLoader getPlatformLoader() {
-        return platformLoader;
-    }
-
     public RandomizerScoreboard getRandomizerScoreboard() {
         return randomizerScoreboard;
     }
 
-    public LeaderboardHandler getLeaderboardHandler() {
-        return leaderboardHandler;
-    }
 }

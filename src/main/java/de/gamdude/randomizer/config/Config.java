@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
@@ -100,8 +99,13 @@ public class Config {
         defaultProperties.put("excludedItems", new String[]{"LIGHT"});
         defaultProperties.put("canBreakBlock", true);
         defaultProperties.put("canGetHungry", false);
+
         defaultProperties.put("playTime", 900);
+        defaultProperties.put("blockToGoal", 100);
+        defaultProperties.put("currentGoal", 0);
+
         defaultProperties.put("spawnWithDefaults", true);
+        defaultProperties.put("allowPVP", true);
 
         defaultProperties.forEach((key, object) -> {
             if(!hasProperty(key))

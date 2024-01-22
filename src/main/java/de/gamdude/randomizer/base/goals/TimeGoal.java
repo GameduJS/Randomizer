@@ -1,24 +1,44 @@
-package de.gamdude.randomizer.ui.submenues;
+package de.gamdude.randomizer.base.goals;
 
+import de.gamdude.randomizer.base.GameDispatcher;
 import de.gamdude.randomizer.config.Config;
-import de.gamdude.randomizer.ui.base.ChildMenu;
-import de.gamdude.randomizer.ui.base.Menu;
+import de.gamdude.randomizer.ui.submenues.SetValueMenu;
 import de.gamdude.randomizer.utils.ItemBuilder;
+import de.gamdude.randomizer.utils.MessageHandler;
 import de.gamdude.randomizer.utils.TimeConverter;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemFlag;
 
-public class TimeToPlayMenu extends ChildMenu {
+import java.util.UUID;
 
-    private final Config config;
+public class TimeGoal extends Goal{
+
     private int seconds;
 
-    public TimeToPlayMenu(Config config, Menu parentMenu) {
-        super(parentMenu, 9, "<yellow>Time To Play");
-        this.config = config;
-        this.seconds = config.getProperty("playTime").getAsInt();
+    public TimeGoal(GameDispatcher gameDispatcher) {
+        super(gameDispatcher,"playTime", "Time Goal");
+    }
+
+    @Override
+    public boolean isFinished(GameDispatcher gameDispatcher) {
+        return seconds == gameDispatcher.getSecondsPlayed();
+    }
+
+    @Override
+    public void loadConfig(Config config) {
+        this.seconds = config.getProperty(this.configKey).getAsInt();
+    }
+
+    @Override
+    public String getScoreboardGoalValue(UUID uuid) {
+        return "<yellow>" + TimeConverter.getTimeString(seconds - gameDispatcher.getSecondsPlayed());
+    }
+
+    @Override
+    public String getScoreboardGoalTitle(Player player) {
+        return MessageHandler.getString(player, "scoreboardTimeGoalTitle");
     }
 
     @Override
@@ -36,6 +56,7 @@ public class TimeToPlayMenu extends ChildMenu {
         inventory.setItem(8,  new ItemBuilder(Material.CLOCK)
                 .setDisplayName("<yellow>" + TimeConverter.getTimeString(seconds))
                 .setLore("").setLore("<gray>Time to play").build());
+
         return true;
     }
 
@@ -60,7 +81,7 @@ public class TimeToPlayMenu extends ChildMenu {
 
     @Override
     public void onClose(Player player) {
-        config.addProperty("playTime", seconds);
+        gameDispatcher.getConfig().addProperty("playTime", seconds);
         super.onClose(player);
     }
 }

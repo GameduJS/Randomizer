@@ -2,6 +2,8 @@ package de.gamdude.randomizer.base;
 
 import com.google.gson.JsonElement;
 import de.gamdude.randomizer.base.structure.Platform;
+import de.gamdude.randomizer.config.Config;
+import de.gamdude.randomizer.world.PlatformLoader;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Item;
@@ -12,9 +14,9 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
 
-public class ItemDropDeployer {
+public class ItemDropDeployer implements Handler {
 
-    private final GameDispatcher gameDispatcher;
+    private final PlatformLoader platformLoader;
 
     private final List<Material> ignoredMaterials;
     private Material[] MATERIALS;
@@ -24,16 +26,17 @@ public class ItemDropDeployer {
     private int dropCooldown;
 
     public ItemDropDeployer(GameDispatcher gameDispatcher) {
-        this.gameDispatcher = gameDispatcher;
+        this.platformLoader = gameDispatcher.getHandler(PlatformLoader.class);
         this.ignoredMaterials = new ArrayList<>();
     }
 
-    public void loadConfig() {
-        for (JsonElement jsonElement : gameDispatcher.getConfig().getProperty("excludedItems").getAsJsonArray())
+    @Override
+    public void loadConfig(Config config) {
+        for (JsonElement jsonElement : config.getProperty("excludedItems").getAsJsonArray())
             ignoredMaterials.add(Material.valueOf(jsonElement.getAsString()));
 
-        dropDelay = gameDispatcher.getConfig().getProperty("firstItemDropDelay").getAsInt();
-        dropCooldown = gameDispatcher.getConfig().getProperty("itemCooldown").getAsInt();
+        dropDelay = config.getProperty("firstItemDropDelay").getAsInt();
+        dropCooldown = config.getProperty("itemCooldown").getAsInt();
 
         MATERIALS = Arrays.stream(Material.values()).filter(Predicate.not(Material::isLegacy)).filter(Material::isItem).filter(Predicate.not(ignoredMaterials::contains)).toArray(Material[]::new);
     }
@@ -48,7 +51,7 @@ public class ItemDropDeployer {
         if (seconds - dropDelay < 0) // Wait dropDelay
             return;
         if ((seconds - dropDelay) % dropCooldown == 0)  // Perform action every dropCooldown seconds
-            gameDispatcher.getPlatformLoader().getPlatforms().stream().map(Map.Entry::getValue).filter(Platform::isEnabled).map(Platform::getPlatformLocation).forEach(this::dropItem);
+            platformLoader.getPlatforms().stream().map(Map.Entry::getValue).filter(Platform::isEnabled).map(Platform::getPlatformLocation).forEach(this::dropItem);
     }
 
 }

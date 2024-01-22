@@ -1,17 +1,18 @@
 package de.gamdude.randomizer.base;
 
+import de.gamdude.randomizer.config.Config;
 import de.gamdude.randomizer.ui.base.LeaderboardObject;
 import de.gamdude.randomizer.world.PlatformLoader;
 
 import java.util.*;
 
-public class LeaderboardHandler {
+public class LeaderboardHandler implements Handler {
 
     private final PlatformLoader platformLoader;
     private final Map<UUID, Integer> positionPlayerMap;
 
     public LeaderboardHandler(GameDispatcher gameDispatcher) {
-        this.platformLoader = gameDispatcher.getPlatformLoader();
+        this.platformLoader = gameDispatcher.getHandler(PlatformLoader.class);
         this.positionPlayerMap = new HashMap<>();
     }
 
@@ -67,4 +68,5 @@ public class LeaderboardHandler {
         }
         return leaderboardObject;
     }
+
 }
