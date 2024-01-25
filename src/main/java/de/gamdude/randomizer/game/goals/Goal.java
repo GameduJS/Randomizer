@@ -1,4 +1,4 @@
-package de.gamdude.randomizer.base.goals;
+package de.gamdude.randomizer.game.goals;
 
 import de.gamdude.randomizer.base.GameDispatcher;
 import de.gamdude.randomizer.config.Config;
@@ -14,8 +14,8 @@ public abstract class Goal extends Menu {
     protected Menu parentMenu;
     protected GameDispatcher gameDispatcher;
 
-    public Goal(GameDispatcher gameDispatcher, String configKey, String displayName) {
-        super(9, "<yellow>" + displayName + " <gray>Value");
+    public Goal(GameDispatcher gameDispatcher, String inventoryTitle, String configKey, String displayName) {
+        super(9, inventoryTitle);
         this.gameDispatcher = gameDispatcher;
         this.configKey = configKey;
         this.displayName = displayName;
@@ -37,7 +37,7 @@ public abstract class Goal extends Menu {
 
     public abstract String getScoreboardGoalValue(UUID uuid);
 
-    public abstract String getScoreboardGoalTitle(Player player);
+    public abstract String getScoreboardGoalDescription(Player player);
 
     public String getDisplayName() {
         return displayName;

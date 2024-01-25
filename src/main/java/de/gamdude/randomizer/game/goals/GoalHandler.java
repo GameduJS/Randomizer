@@ -1,4 +1,4 @@
-package de.gamdude.randomizer.base.goals;
+package de.gamdude.randomizer.game.goals;
 
 import de.gamdude.randomizer.base.GameDispatcher;
 import de.gamdude.randomizer.base.Handler;

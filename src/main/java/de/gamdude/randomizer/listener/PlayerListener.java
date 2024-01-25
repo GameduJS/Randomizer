@@ -1,7 +1,7 @@
 package de.gamdude.randomizer.listener;
 
 import de.gamdude.randomizer.base.GameDispatcher;
-import de.gamdude.randomizer.config.Config;
+import de.gamdude.randomizer.game.options.Option;
 import de.gamdude.randomizer.utils.MessageHandler;
 import de.gamdude.randomizer.world.PlatformLoader;
 import org.bukkit.entity.Player;
@@ -14,19 +14,15 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 
 public class PlayerListener implements Listener {
 
-    private final GameDispatcher gameDispatcher;
     private final PlatformLoader platformLoader;
-    private final Config config;
 
     public PlayerListener(GameDispatcher gameDispatcher) {
-        this.gameDispatcher = gameDispatcher;
         this.platformLoader = gameDispatcher.getHandler(PlatformLoader.class);
-        this.config = gameDispatcher.getConfig();
     }
 
     @EventHandler
     public void onHunger(FoodLevelChangeEvent event) {
-        event.setCancelled(!config.getProperty("canGetHungry").getAsBoolean());
+        event.setCancelled(!Option.ALLOW_HUNGER.getValue().getAsBoolean());
     }
 
     @EventHandler
@@ -43,9 +39,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPVP(EntityDamageByEntityEvent e) {
-        boolean enabled = config.getProperty("allowPVP").getAsBoolean();
-
-        if(!enabled)
+        if(!Option.ALLOW_PVP.getValue().getAsBoolean())
             if(e.getDamager() instanceof Player && e.getEntity() instanceof Player)
                 e.setCancelled(true);
     }

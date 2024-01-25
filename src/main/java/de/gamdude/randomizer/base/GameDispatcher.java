@@ -1,15 +1,14 @@
 package de.gamdude.randomizer.base;
 
 import de.gamdude.randomizer.Randomizer;
-import de.gamdude.randomizer.base.goals.GoalHandler;
+import de.gamdude.randomizer.game.goals.GoalHandler;
 import de.gamdude.randomizer.config.Config;
+import de.gamdude.randomizer.game.options.Option;
 import de.gamdude.randomizer.ui.visuals.RandomizerScoreboard;
 import de.gamdude.randomizer.utils.MessageHandler;
 import de.gamdude.randomizer.world.PlatformLoader;
 import org.bukkit.Bukkit;
-import org.bukkit.GameRule;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.HashMap;
@@ -46,6 +45,8 @@ public class GameDispatcher {
         this.handlerMap.put(GoalHandler.class, new GoalHandler(this));
 
         this.randomizerScoreboard = new RandomizerScoreboard(this);
+
+        Option.injectGameDispatcher(this);
         startScheduler();
     }
 

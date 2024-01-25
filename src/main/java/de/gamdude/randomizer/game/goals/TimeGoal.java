@@ -1,8 +1,8 @@
-package de.gamdude.randomizer.base.goals;
+package de.gamdude.randomizer.game.goals;
 
 import de.gamdude.randomizer.base.GameDispatcher;
 import de.gamdude.randomizer.config.Config;
-import de.gamdude.randomizer.ui.submenues.SetValueMenu;
+import de.gamdude.randomizer.game.options.Option;
 import de.gamdude.randomizer.utils.ItemBuilder;
 import de.gamdude.randomizer.utils.MessageHandler;
 import de.gamdude.randomizer.utils.TimeConverter;
@@ -18,7 +18,7 @@ public class TimeGoal extends Goal{
     private int seconds;
 
     public TimeGoal(GameDispatcher gameDispatcher) {
-        super(gameDispatcher,"playTime", "Time Goal");
+        super(gameDispatcher, "<yellow>Length <gray>of the race!", "playTime", "Time Goal");
     }
 
     @Override
@@ -37,34 +37,20 @@ public class TimeGoal extends Goal{
     }
 
     @Override
-    public String getScoreboardGoalTitle(Player player) {
+    public String getScoreboardGoalDescription(Player player) {
         return MessageHandler.getString(player, "scoreboardTimeGoalTitle");
     }
 
     @Override
     public boolean onClick(Player player, int slot, ClickType type) {
         if(slot>2) return true;
-        int secondsToChange = (int) Math.pow(60, 2 - slot);
-
-        if(type.isRightClick())
-            secondsToChange *=-1;
-        if(type.isShiftClick())
-            secondsToChange*=5;
-
-        seconds = Math.min(60*60*24 - 1, Math.max(0, seconds + secondsToChange));
-
-        inventory.setItem(8,  new ItemBuilder(Material.CLOCK)
-                .setDisplayName("<yellow>" + TimeConverter.getTimeString(seconds))
-                .setLore("").setLore("<gray>Time to play").build());
-
+        Option.PLAY_TIME.toggleOption(inventory, type, slot);
         return true;
     }
 
     @Override
     public void onOpen(Player player) {
-        inventory.setItem(8,  new ItemBuilder(Material.CLOCK)
-                .setDisplayName("<yellow>" + TimeConverter.getTimeString(seconds))
-                .setLore("").setLore("<gray>Time to play").build());
+        inventory.setItem(8,  Option.PLAY_TIME.getDisplayItem());
 
         inventory.setItem(0, new ItemBuilder(Material.GRAY_WOOL).setDisplayName("<green>Increase<gray> / <red>Decrease <gray>Hours")
                 .setLore("").setLore("<yellow>Right-Click <gray>to decrease value").setLore("<yellow>Left-Click <gray>to increase value").setLore("")
@@ -79,9 +65,4 @@ public class TimeGoal extends Goal{
         fill(new ItemBuilder(Material.WHITE_STAINED_GLASS_PANE).setDisplayName("").addItemFlag(ItemFlag.HIDE_ATTRIBUTES).build());
     }
 
-    @Override
-    public void onClose(Player player) {
-        gameDispatcher.getConfig().addProperty("playTime", seconds);
-        super.onClose(player);
-    }
 }

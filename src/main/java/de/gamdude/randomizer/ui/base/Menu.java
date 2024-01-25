@@ -36,23 +36,6 @@ public abstract class Menu implements InventoryHolder {
         }
     }
     
-    /**
-     * @param row >> value of 1 - 6
-     * @param itemStack
-     */
-    protected void fill(int row, ItemStack itemStack) {
-    	/** Is only working on normal inventories **/
-    	if(!this.inventory.getType().equals(InventoryType.CHEST)) return;
-    	/** Cannot set items to slot greather than inventory size **/
-    	if(row * 9 > this.inventory.getSize()) return;
-    	
-    	/** Fill in items into row **/
-    	for(int i = (row - 1) * 9; i < row * 9; i++) {
-    		if(inventory.getItem(i) != null) continue;
-    		inventory.setItem(i, itemStack);
-    	}
-    }
-
     public @NotNull Inventory getInventory() {
         return this.inventory;
     }

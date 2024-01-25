@@ -1,6 +1,6 @@
 package de.gamdude.randomizer.listener;
 
-import de.gamdude.randomizer.base.structure.Platform;
+import de.gamdude.randomizer.world.Platform;
 import de.gamdude.randomizer.base.GameDispatcher;
 import de.gamdude.randomizer.utils.MessageHandler;
 import de.gamdude.randomizer.world.PlatformLoader;

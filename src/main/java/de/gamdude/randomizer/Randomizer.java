@@ -19,12 +19,11 @@ import java.util.Objects;
 public final class Randomizer extends JavaPlugin {
 
     private final PluginManager pluginManager = Bukkit.getPluginManager();
-    private Config config;
 
     @Override
     public void onEnable() {
-         this.config = new Config(this, "randomizer");
-        GameDispatcher gameDispatcher = new GameDispatcher(this, config);
+         Config config = new Config(this, "randomizer");
+         GameDispatcher gameDispatcher = new GameDispatcher(this, config);
 
         pluginManager.registerEvents(new PlayerConnectionListener(gameDispatcher), this);
         pluginManager.registerEvents(new PlayerMoveListener(gameDispatcher), this);
@@ -32,14 +31,13 @@ public final class Randomizer extends JavaPlugin {
         pluginManager.registerEvents(new BlockInteractListener(gameDispatcher), this);
         pluginManager.registerEvents(new MenuListener(this), this);
         pluginManager.registerEvents(new PlayerListener(gameDispatcher), this);
-        pluginManager.registerEvents(new WorldLoadListener(gameDispatcher), this);
+        pluginManager.registerEvents(new WorldLoadListener(), this);
 
-
-        getCommand("game").setExecutor(new GameCommand(gameDispatcher));
+        Objects.requireNonNull(getCommand("game")).setExecutor(new GameCommand(gameDispatcher));
     }
+
     @Override
     public void onDisable() {
-        config.savePropertiesToFile();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
                 FileUtils.deleteDirectory(Objects.requireNonNull(Bukkit.getWorld("world")).getWorldFolder()) ;
@@ -50,7 +48,7 @@ public final class Randomizer extends JavaPlugin {
     }
 
     @Override
-    public @Nullable ChunkGenerator getDefaultWorldGenerator(@NotNull String worldName, @Nullable String id) {
+    public @NotNull ChunkGenerator getDefaultWorldGenerator(@NotNull String worldName, @Nullable String id) {
         return new VoidWorldGenerator();
     }
 }

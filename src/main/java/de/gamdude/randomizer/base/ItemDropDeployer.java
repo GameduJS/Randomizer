@@ -1,7 +1,7 @@
 package de.gamdude.randomizer.base;
 
 import com.google.gson.JsonElement;
-import de.gamdude.randomizer.base.structure.Platform;
+import de.gamdude.randomizer.world.Platform;
 import de.gamdude.randomizer.config.Config;
 import de.gamdude.randomizer.world.PlatformLoader;
 import org.bukkit.Location;

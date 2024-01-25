@@ -1,6 +1,5 @@
 package de.gamdude.randomizer.ui.visuals;
 
-import de.gamdude.randomizer.Randomizer;
 import de.gamdude.randomizer.base.GameDispatcher;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -11,7 +10,6 @@ import org.bukkit.scoreboard.Team;
 
 import java.util.UUID;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class RScore {
@@ -23,7 +21,6 @@ public class RScore {
     private final Supplier<Integer> secondsSupplier;
     private final Team team;
 
-
     private RScore(Scoreboard scoreboard, String name, int score, String prefix, String suffix, BiConsumer<Team, Integer> updateConsumer, Supplier<Integer> secondsSupplier) {
         Objective objective = scoreboard.getObjective("sideboard");
         this.team = createScore(scoreboard, objective, name, prefix, suffix, score);
@@ -34,7 +31,6 @@ public class RScore {
     public void updateScore() {
         this.updateConsumer.accept(team, secondsSupplier.get());
     }
-
 
     private Team createScore(Scoreboard scoreboard, Objective objective, String name, String prefix, String suffix, int score) {
         NamedTextColor color1 = NamedTextColor.NAMES.values().stream().sorted().toList().get(15 - score % 16);
@@ -92,7 +88,7 @@ public class RScore {
             return new RScore(scoreboard, name, score, prefix, suffix, teamConsumer, gameDispatcher::getSecondsPlayed);
         }
 
-        public RScore.Builder decoScoreBuild(int score) {
+        public RScore.Builder blankScore(int score) {
             return new Builder().score(score).prefix("   ");
         }
 

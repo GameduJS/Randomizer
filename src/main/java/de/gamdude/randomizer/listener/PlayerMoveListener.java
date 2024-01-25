@@ -5,6 +5,7 @@ import de.gamdude.randomizer.utils.MessageHandler;
 import de.gamdude.randomizer.world.PlatformLoader;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -30,17 +31,30 @@ public class PlayerMoveListener implements Listener {
             player.teleport(platformLoader.getPlatform(player.getUniqueId()).getPlatformLocation());
             player.setVelocity(new Vector(0,0,0));
             player.setFallDistance(0f);
-            Bukkit.getOnlinePlayers().forEach(onlinePlayer -> MessageHandler.sendMessage(onlinePlayer, "playerFell", player.getName()));
+            if(player.getGameMode() == GameMode.SURVIVAL && gameDispatcher.getState() == 1)
+                Bukkit.getOnlinePlayers().forEach(onlinePlayer -> MessageHandler.sendMessage(onlinePlayer, "playerFell", player.getName()));
         }
 
         if(player.getGameMode() != GameMode.SURVIVAL)
             return;
 
-        if(gameDispatcher.getState() == 0) {
-            if(event.hasChangedBlock())
+        if(gameDispatcher.getState() == 0 || gameDispatcher.getState() == 2) {
+            if(event.hasChangedBlock()) {
                 event.setCancelled(true);
+                return;
+            }
         }
 
+        if(gameDispatcher.getState() > 0)
+            if(hasChangedChunk(event.getTo(), event.getFrom()))
+                event.setCancelled(true);
+
+    }
+
+    private boolean hasChangedChunk(Location to, Location from) {
+        int x1 = to.getBlockX() / 16;
+        int x2 = from.getBlockX() / 16;
+        return x1 != x2 || Math.signum(to.getX()) != Math.signum(from.getX());
     }
 
 }

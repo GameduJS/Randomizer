@@ -1,6 +1,6 @@
 package de.gamdude.randomizer.base;
 
-import de.gamdude.randomizer.base.structure.Platform;
+import de.gamdude.randomizer.world.Platform;
 import de.gamdude.randomizer.world.PlatformLoader;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

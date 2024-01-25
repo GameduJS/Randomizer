@@ -21,9 +21,8 @@ public class GameCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if(args.length == 0)
+        if(args.length != 1)
             return false;
-
         String state = args[0];
 
         switch (state) {

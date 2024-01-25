@@ -1,7 +1,6 @@
 package de.gamdude.randomizer.world;
 
 import de.gamdude.randomizer.base.Handler;
-import de.gamdude.randomizer.base.structure.Platform;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -28,7 +27,7 @@ public class PlatformLoader implements Handler {
         }
 
         Location location =  new Location(world, xCoordinate, 64, 0, 0, 0).toCenterLocation();
-        Platform platform = new Platform(uuid, location);
+        Platform platform = new Platform(location);
         this.playerPlatformLocationMap.put(uuid, platform);
 
         return platform;

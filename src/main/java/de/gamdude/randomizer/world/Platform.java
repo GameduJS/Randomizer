@@ -1,28 +1,21 @@
-package de.gamdude.randomizer.base.structure;
+package de.gamdude.randomizer.world;
 
 import org.bukkit.Location;
 
-import java.util.UUID;
-
 public class Platform {
 
-    private final UUID playerID;
     private final Location platformLocation;
     private boolean enabled;
 
     private Location lastBlockBuilt;
     private int blocksBuilt;
 
-    public Platform(UUID playerID, Location location) {
-        this.playerID = playerID;
+    public Platform(Location location) {
         this.platformLocation = location;
         this.lastBlockBuilt = platformLocation.toBlockLocation();
         this.enabled = true; //default
     }
 
-    public UUID getPlayerID() {
-        return playerID;
-    }
 
     public Location getPlatformLocation() {
         return platformLocation;

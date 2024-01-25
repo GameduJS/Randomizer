@@ -4,9 +4,9 @@ import com.destroystokyo.paper.event.block.BlockDestroyEvent;
 import de.gamdude.randomizer.base.GameDispatcher;
 import de.gamdude.randomizer.base.LeaderboardHandler;
 import de.gamdude.randomizer.base.PlayerProgressTracker;
+import de.gamdude.randomizer.game.options.Option;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Bed;
 import org.bukkit.event.EventHandler;
@@ -33,18 +33,29 @@ public class BlockInteractListener implements Listener {
 
     @EventHandler
     public void onBreak(BlockBreakEvent event) {
-        if (gameDispatcher.getState() != 1 && event.getPlayer().getGameMode() == GameMode.SURVIVAL) {
+        // Creative players are able to break any block
+        if(event.getPlayer().getGameMode() != GameMode.SURVIVAL)
+            return;
+        // Players are only allow to break blocks during ingame state
+        if (gameDispatcher.getState() != 1) {
             event.setCancelled(true);
             return;
         }
-        if (gameDispatcher.getConfig().getProperty("canBreakBlock").getAsBoolean())
+        // If enabled 'canBreakBlock' players can break any block
+        if (Option.ENABLE_BREAK_BLOCK.getValue().getAsBoolean())
             return;
-        if (placedBlocksHashList.contains(event.getBlock().getLocation().hashCode()) && event.getBlock().getType() != Material.BARRIER)
+        // If block was placed & players cannot break blocks, disallow it.
+        if(isPlacedBlock(event.getBlock()))
             event.setCancelled(true);
     }
 
     @EventHandler
     public void onBuild(BlockPlaceEvent event) {
+        if(event.getBlockPlaced().getX() % 16 == 7 && event.getBlockPlaced().getZ() == 0) {
+            event.setCancelled(true);
+            return;
+        }
+
         if (gameDispatcher.getState() != 1 && event.getPlayer().getGameMode() == GameMode.SURVIVAL) {
             event.setCancelled(true);
             return;
@@ -61,7 +72,7 @@ public class BlockInteractListener implements Listener {
 
     @EventHandler
     public void onDrop(BlockDropItemEvent event) {
-        if (placedBlocksHashList.contains(event.getBlock().getLocation().hashCode()))
+        if (isPlacedBlock(event.getBlock()) && !Option.BLOCK_DROP.getValue().getAsBoolean())
             event.setCancelled(true);
     }
 
@@ -69,6 +80,10 @@ public class BlockInteractListener implements Listener {
     @EventHandler
     public void onBlockDestroy(BlockDestroyEvent e) {
         e.setWillDrop(false);
+    }
+
+    private boolean isPlacedBlock(Block block) {
+        return placedBlocksHashList.contains(block.getLocation().hashCode()) || block.getBlockData() instanceof Bed bed && placedBlocksHashList.contains(block.getLocation().clone().subtract(bed.getFacing().getModX(), 0, bed.getFacing().getModZ()).hashCode());
     }
 
 }
