@@ -22,7 +22,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onHunger(FoodLevelChangeEvent event) {
-        event.setCancelled(!Option.ALLOW_HUNGER.getValue().getAsBoolean());
+        event.setCancelled(!Option.ENABLE_HUNGER.getValue().getAsBoolean());
     }
 
     @EventHandler
@@ -39,7 +39,7 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPVP(EntityDamageByEntityEvent e) {
-        if(!Option.ALLOW_PVP.getValue().getAsBoolean())
+        if(!Option.ENABLE_PVP.getValue().getAsBoolean())
             if(e.getDamager() instanceof Player && e.getEntity() instanceof Player)
                 e.setCancelled(true);
     }

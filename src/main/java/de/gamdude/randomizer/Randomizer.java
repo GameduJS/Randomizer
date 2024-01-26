@@ -6,6 +6,7 @@ import de.gamdude.randomizer.config.Config;
 import de.gamdude.randomizer.listener.*;
 import de.gamdude.randomizer.world.VoidWorldGenerator;
 import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -32,6 +33,7 @@ public final class Randomizer extends JavaPlugin {
         pluginManager.registerEvents(new MenuListener(this), this);
         pluginManager.registerEvents(new PlayerListener(gameDispatcher), this);
         pluginManager.registerEvents(new WorldLoadListener(), this);
+        pluginManager.registerEvents(new ItemInteractListener(gameDispatcher), this);
 
         Objects.requireNonNull(getCommand("game")).setExecutor(new GameCommand(gameDispatcher));
     }

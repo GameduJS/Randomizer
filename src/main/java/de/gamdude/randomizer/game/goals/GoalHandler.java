@@ -21,7 +21,7 @@ public class GoalHandler implements Handler {
     @Override
     public void loadConfig(Config config) {
         int goalId = config.getProperty("currentGoal").getAsInt();
-        Arrays.stream(GOALS).forEach(g -> g.loadConfig(config));
+        Arrays.stream(GOALS).forEach(g -> g.loadGoalConfig(config));
         this.activeGoal = GOALS[goalId];
     }
 

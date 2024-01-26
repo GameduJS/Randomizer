@@ -11,15 +11,15 @@ import org.bukkit.block.Block;
 import org.bukkit.block.data.type.Bed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockDropItemEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.*;
+import org.bukkit.event.player.PlayerItemConsumeEvent;
+import org.bukkit.event.world.StructureGrowEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class BlockInteractListener implements Listener {
-    private final List<Integer> placedBlocksHashList = new ArrayList<>();
+    private final List<Location> placedBlocksHashList = new ArrayList<>();
 
     private final GameDispatcher gameDispatcher;
     private final PlayerProgressTracker playerProgressTracker;
@@ -42,11 +42,18 @@ public class BlockInteractListener implements Listener {
             return;
         }
         // If enabled 'canBreakBlock' players can break any block
-        if (Option.ENABLE_BREAK_BLOCK.getValue().getAsBoolean())
+        if (Option.ENABLE_BREAK_BLOCK.getValue().getAsBoolean()) {
+            placedBlocksHashList.remove(event.getBlock().getLocation().hashCode());
             return;
+        }
         // If block was placed & players cannot break blocks, disallow it.
         if(isPlacedBlock(event.getBlock()))
             event.setCancelled(true);
+    }
+
+    @EventHandler
+    public void onTreeGrowth(StructureGrowEvent event) {
+        placedBlocksHashList.remove(event.getLocation());
     }
 
     @EventHandler
@@ -62,7 +69,7 @@ public class BlockInteractListener implements Listener {
         }
         Block block = event.getBlock();
 
-        placedBlocksHashList.add(block.getLocation().hashCode());
+        placedBlocksHashList.add(block.getLocation());
         int zOff = (block.getType().data == Bed.class) ? ((Bed) block.getBlockData()).getFacing().getModZ() : 0;
         Location placedBlockLocation = block.getLocation().clone().add(0, 0, zOff);
 
@@ -83,7 +90,7 @@ public class BlockInteractListener implements Listener {
     }
 
     private boolean isPlacedBlock(Block block) {
-        return placedBlocksHashList.contains(block.getLocation().hashCode()) || block.getBlockData() instanceof Bed bed && placedBlocksHashList.contains(block.getLocation().clone().subtract(bed.getFacing().getModX(), 0, bed.getFacing().getModZ()).hashCode());
+        return placedBlocksHashList.contains(block.getLocation()) || block.getBlockData() instanceof Bed bed && placedBlocksHashList.contains(block.getLocation().clone().subtract(bed.getFacing().getModX(), 0, bed.getFacing().getModZ()));
     }
 
 }

@@ -33,7 +33,7 @@ public abstract class Goal extends Menu {
 
     public abstract boolean isFinished(GameDispatcher gameDispatcher);
 
-    public abstract void loadConfig(Config config);
+    public abstract void loadGoalConfig(Config config);
 
     public abstract String getScoreboardGoalValue(UUID uuid);
 

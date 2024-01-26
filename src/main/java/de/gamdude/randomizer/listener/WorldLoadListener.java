@@ -14,7 +14,7 @@ public class WorldLoadListener implements Listener {
         World world = event.getWorld();
         world.setTime(6000L);
         world.setGameRule(GameRule.ANNOUNCE_ADVANCEMENTS, false);
-        world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, Option.ALLOW_DAY_NIGHT_CYCLE.getValue().getAsBoolean());
+        world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, Option.ENABLE_DAY_NIGHT_CYCLE.getValue().getAsBoolean());
     }
 
 }

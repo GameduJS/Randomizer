@@ -31,7 +31,7 @@ public class BlockGoal extends Goal {
     }
 
     @Override
-    public void loadConfig(Config config) {
+    public void loadGoalConfig(Config config) {
         blocksToBuild = config.getProperty("blockToGoal").getAsInt();
     }
 
@@ -49,13 +49,13 @@ public class BlockGoal extends Goal {
     public boolean onClick(Player player, int slot, ClickType type) {
         if(slot - 1 > 0)
             return true;
-        Option.BLOCKS_TO_PLACE.toggleOption(inventory, type, slot);
+        Option.BLOCKS_TO_PLACE.toggleOption(player, inventory, type, slot);
         return true;
     }
 
     @Override
     public void onOpen(Player player) {
-        inventory.setItem(8, Option.BLOCKS_TO_PLACE.getDisplayItem());
+        inventory.setItem(8, Option.BLOCKS_TO_PLACE.getDisplayItem(player));
 
         inventory.setItem(0, new ItemBuilder(Material.WHITE_WOOL).setDisplayName("<green>Increase<gray> / <red>Decrease")
                 .setLore("").setLore("<yellow>Right-Click <gray>to decrease value by <yellow>1").setLore("<yellow>Left-Click <gray>to increase value by <yellow>1").build());

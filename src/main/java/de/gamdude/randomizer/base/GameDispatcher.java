@@ -55,7 +55,17 @@ public class GameDispatcher {
         return (T) this.handlerMap.get(clazz);
     }
 
-    public void startScheduler() {
+    /**
+     * Called at the start of the game to load the configs
+     */
+    private void loadConfig() {
+        this.handlerMap.values().forEach(handler -> handler.loadConfig(config));
+    }
+
+    /**
+     * Starts the scheduler for the game loop.
+     */
+    private void startScheduler() {
         if(taskID != 0)
             return;
 
@@ -68,21 +78,16 @@ public class GameDispatcher {
                 Bukkit.getOnlinePlayers().forEach(player -> randomizerScoreboard.updateScoreboard());
                 seconds++;
             }
-
-
         }, 0, 20);
-    }
-
-    private void loadConfig() {
-        this.handlerMap.values().forEach(handler -> handler.loadConfig(config));
     }
 
     public void startGame() {
         if(state > 0)
             return;
+        this.state = 1;
         loadConfig();
 
-        boolean spawnWithDefaults = config.getProperty("spawnWithDefaults").getAsBoolean();
+        boolean spawnWithDefaults = Option.ENABLE_START_ITEMS.getValue().getAsBoolean();
         Bukkit.getOnlinePlayers().forEach(player-> {
             getHandler(LeaderboardHandler.class).updateLeaderboard(player.getUniqueId());
 
@@ -91,15 +96,13 @@ public class GameDispatcher {
                 player.getInventory().setItem(1, new ItemStack(Material.OAK_SAPLING));
             }
         });
-
-        this.state = 1;
     }
 
     public void pause() {
-        if(state == 2)
-            state = 1;
-        else if(state == 1)
-            state = 2;
+        switch (state) {
+            case 1 -> state = 2;
+            case 2 -> state = 1;
+        }
     }
 
     public void stopGame() {
@@ -109,7 +112,7 @@ public class GameDispatcher {
         UUID topPlayerID = getHandler(LeaderboardHandler.class).getTopPlayers().getPlayerList().get(0);
 
         Bukkit.getOnlinePlayers().forEach(onlinePlayer -> {
-            MessageHandler.sendMessage(onlinePlayer, "playerWon", Bukkit.getOfflinePlayer(topPlayerID).getName(), getHandler(PlayerProgressTracker.class).getBlocksBuilt(topPlayerID)+ "");
+            MessageHandler.sendMessage(onlinePlayer, "playerWon", Bukkit.getOfflinePlayer(topPlayerID).getName(), getHandler(PlayerProgressTracker.class).getBlocksBuilt(topPlayerID) + "");
             MessageHandler.sendMessage(onlinePlayer, "serverShutdown");
         });
 

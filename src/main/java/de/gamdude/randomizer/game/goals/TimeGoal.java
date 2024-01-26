@@ -27,7 +27,7 @@ public class TimeGoal extends Goal{
     }
 
     @Override
-    public void loadConfig(Config config) {
+    public void loadGoalConfig(Config config) {
         this.seconds = config.getProperty(this.configKey).getAsInt();
     }
 
@@ -44,13 +44,13 @@ public class TimeGoal extends Goal{
     @Override
     public boolean onClick(Player player, int slot, ClickType type) {
         if(slot>2) return true;
-        Option.PLAY_TIME.toggleOption(inventory, type, slot);
+        Option.PLAY_TIME.toggleOption(player, inventory, type, slot);
         return true;
     }
 
     @Override
     public void onOpen(Player player) {
-        inventory.setItem(8,  Option.PLAY_TIME.getDisplayItem());
+        inventory.setItem(8,  Option.PLAY_TIME.getDisplayItem(player));
 
         inventory.setItem(0, new ItemBuilder(Material.GRAY_WOOL).setDisplayName("<green>Increase<gray> / <red>Decrease <gray>Hours")
                 .setLore("").setLore("<yellow>Right-Click <gray>to decrease value").setLore("<yellow>Left-Click <gray>to increase value").setLore("")
