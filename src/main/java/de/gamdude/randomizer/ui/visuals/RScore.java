@@ -8,6 +8,7 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
@@ -22,7 +23,7 @@ public class RScore {
     private final Team team;
 
     private RScore(Scoreboard scoreboard, String name, int score, String prefix, String suffix, BiConsumer<Team, Integer> updateConsumer, Supplier<Integer> secondsSupplier) {
-        Objective objective = scoreboard.getObjective("sideboard");
+        Objective objective = Objects.requireNonNull(scoreboard.getObjective("sideboard"));
         this.team = createScore(scoreboard, objective, name, prefix, suffix, score);
         this.updateConsumer = updateConsumer;
         this.secondsSupplier = secondsSupplier;

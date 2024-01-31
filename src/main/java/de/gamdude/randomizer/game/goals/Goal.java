@@ -2,7 +2,7 @@ package de.gamdude.randomizer.game.goals;
 
 import de.gamdude.randomizer.base.GameDispatcher;
 import de.gamdude.randomizer.config.Config;
-import de.gamdude.randomizer.ui.base.Menu;
+import de.gamdude.randomizer.ui.menu.Menu;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;

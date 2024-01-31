@@ -1,7 +1,7 @@
 package de.gamdude.randomizer.listener;
 
 import de.gamdude.randomizer.Randomizer;
-import de.gamdude.randomizer.ui.base.Menu;
+import de.gamdude.randomizer.ui.menu.Menu;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

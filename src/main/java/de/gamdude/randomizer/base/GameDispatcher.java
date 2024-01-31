@@ -109,7 +109,7 @@ public class GameDispatcher {
         if(state == 0 || state == 3)
             return;
         state = 3;
-        UUID topPlayerID = getHandler(LeaderboardHandler.class).getTopPlayers().getPlayerList().get(0);
+        UUID topPlayerID = getHandler(LeaderboardHandler.class).getTopPlayers().get(0);
 
         Bukkit.getOnlinePlayers().forEach(onlinePlayer -> {
             MessageHandler.sendMessage(onlinePlayer, "playerWon", Bukkit.getOfflinePlayer(topPlayerID).getName(), getHandler(PlayerProgressTracker.class).getBlocksBuilt(topPlayerID) + "");

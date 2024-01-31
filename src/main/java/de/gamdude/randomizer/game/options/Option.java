@@ -6,8 +6,8 @@ import de.gamdude.randomizer.config.Config;
 import de.gamdude.randomizer.game.goals.Goal;
 import de.gamdude.randomizer.game.goals.GoalHandler;
 import de.gamdude.randomizer.game.goals.TimeGoal;
-import de.gamdude.randomizer.ui.base.Menu;
-import de.gamdude.randomizer.ui.submenues.SetValueMenu;
+import de.gamdude.randomizer.ui.menu.Menu;
+import de.gamdude.randomizer.ui.menu.SetTimeValueMenu;
 import de.gamdude.randomizer.utils.ItemBuilder;
 import de.gamdude.randomizer.utils.TimeConverter;
 import org.apache.commons.lang3.NotImplementedException;
@@ -44,8 +44,8 @@ public enum Option {
         @Override
         public ItemStack getDisplayItem(Player player) {
             boolean canGetHungry = config.getProperty(this.configKey).getAsBoolean();
-            return new ItemBuilder( canGetHungry ? Material.BEEF : Material.COOKED_BEEF).setDisplayName("<dark_gray><b>Hunger Option")
-                    .setLore("").setLore("<gray>Choose whether players should get hungry or not").setLore("")
+            return new ItemBuilder( canGetHungry ? Material.ROTTEN_FLESH : Material.COOKED_BEEF).setDisplayName("<dark_gray><b>Hunger Option")
+                    .setLore("").setLore("<gray>Choose whether players should get hungry").setLore("")
                     .setLore("<gray>Currently <yellow>" + getStatusString()).build();
         }
     },
@@ -63,7 +63,8 @@ public enum Option {
     ENABLE_BREAK_BLOCK("canBreakBlock", false) {
         @Override
         public ItemStack getDisplayItem(Player player) {
-            return new ItemBuilder(Material.STONE_PICKAXE).setDisplayName("<dark_gray><b>Block Break").setLore("")
+            boolean val = getValue().getAsBoolean();
+            return new ItemBuilder(val ? Material.DIAMOND_PICKAXE : Material.WOODEN_PICKAXE).setDisplayName("<dark_gray><b>Block Break").setLore("")
                     .setLore("<gray>Choose whether players are able to destroy blocks").setLore("")
                     .setLore("<gray>Currently <yellow>" + getStatusString()).build();
         }
@@ -78,7 +79,7 @@ public enum Option {
 
         @Override
         public void openConfigMenu(Player player, @org.jetbrains.annotations.Nullable Menu parent) {
-            player.openInventory(new SetValueMenu(parent, config, configKey).getInventory());
+            player.openInventory(new SetTimeValueMenu(config, "<gray>Change Item Spawn Cooldown", configKey, parent).disableHours().getInventory());
         }
     },
 
@@ -118,7 +119,7 @@ public enum Option {
 
         @Override
         public void openConfigMenu(Player player, @org.jetbrains.annotations.Nullable Menu parent) {
-            player.openInventory(new SetValueMenu(parent, config, configKey).getInventory());
+            player.openInventory(new SetTimeValueMenu(config, "<gray>First Item Drop Delay", configKey, parent).disableHours().getInventory());
         }
     },
 
@@ -165,7 +166,7 @@ public enum Option {
             return new ItemBuilder(Material.GRASS_BLOCK)
                     .setDisplayName("<dark_gray><b>Blocks to Victory")
                     .setLore("").setLore("<gray>Total number of blocks a player must build to achieve victory.").setLore("")
-                    .setLore("<gray>Current value: <yellow>" + getValue().getAsInt()).build();
+                    .setLore("<gray>Currently <yellow>" + getValue().getAsInt() + " blocks").build();
         }
     },
 
@@ -176,7 +177,8 @@ public enum Option {
     BLOCK_DROP("doBlockDrop", false) {
         @Override
         public ItemStack getDisplayItem(Player player) {
-            return new ItemBuilder(Material.COBBLESTONE).setDisplayName("<dark_gray><b>Block Drops")
+            boolean val = getValue().getAsBoolean();
+            return new ItemBuilder(val ? Material.STONE : Material.GRAVEL).setDisplayName("<dark_gray><b>Block Drops")
                     .setLore("").setLore("<gray>Choose whether blocks should drop after being broken.").setLore("")
                     .setLore("<gray>Currently <yellow>" + getStatusString()).build();
         }

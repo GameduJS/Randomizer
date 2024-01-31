@@ -1,10 +1,9 @@
-package de.gamdude.randomizer.ui.base;
+package de.gamdude.randomizer.ui.menu;
 
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -14,12 +13,14 @@ public abstract class Menu implements InventoryHolder {
 
     protected static final MiniMessage miniMessage = MiniMessage.miniMessage();
     protected Inventory inventory;
-
-    public Menu(InventoryType type, String title) {
-        this.inventory = Bukkit.createInventory(this, type, miniMessage.deserialize(title));
-    }
+    private final Menu parent;
 
     public Menu(int size, String title) {
+        this(null, size, title);
+    }
+
+    public Menu(Menu parent, int size, String title) {
+        this.parent = parent;
         this.inventory = Bukkit.createInventory(this, size, miniMessage.deserialize(title));
     }
 
@@ -27,7 +28,10 @@ public abstract class Menu implements InventoryHolder {
 
     public abstract void onOpen(Player player);
 
-    public abstract void onClose(Player player);
+    public void onClose(Player player) {
+        if(parent != null)
+            player.openInventory(parent.getInventory());
+    }
 
     protected void fill(ItemStack item) {
         for(int i = 0; i < inventory.getSize(); i++) {

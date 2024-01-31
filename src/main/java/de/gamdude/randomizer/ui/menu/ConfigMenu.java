@@ -1,10 +1,9 @@
-package de.gamdude.randomizer.ui;
+package de.gamdude.randomizer.ui.menu;
 
 import de.gamdude.randomizer.base.GameDispatcher;
 import de.gamdude.randomizer.game.goals.GoalHandler;
 import de.gamdude.randomizer.config.Config;
 import de.gamdude.randomizer.game.options.Option;
-import de.gamdude.randomizer.ui.base.Menu;
 import de.gamdude.randomizer.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;

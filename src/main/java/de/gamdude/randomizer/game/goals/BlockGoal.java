@@ -27,7 +27,7 @@ public class BlockGoal extends Goal {
 
     @Override
     public boolean isFinished(GameDispatcher gameDispatcher) {
-        return blocksToBuild <= playerProgressTracker.getBlocksBuilt(leaderboardHandler.getTopPlayers().getPlayerList().get(0));
+        return blocksToBuild <= playerProgressTracker.getBlocksBuilt(leaderboardHandler.getTopPlayers().get(0));
     }
 
     @Override

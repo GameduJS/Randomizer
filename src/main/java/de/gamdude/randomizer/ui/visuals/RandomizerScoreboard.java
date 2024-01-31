@@ -63,7 +63,7 @@ public class RandomizerScoreboard {
         for(int i = 1; i <=3; ++i) {
             int index = i;
             scoreBuilder.add(new RScore.Builder().score(12 - i).prefix(getTopPlayersPrefix(i)).suffix("<red>-").onUpdate((team, integer) ->  {
-                var topPlayers = leaderboardHandler.getTopPlayers().getPlayerList();
+                var topPlayers = leaderboardHandler.getTopPlayers();
 
                 if(topPlayers.size() < index) {
                     team.suffix(miniMessage.deserialize("<gray>✘"));

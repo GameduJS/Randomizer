@@ -1,7 +1,5 @@
 package de.gamdude.randomizer.base;
 
-import de.gamdude.randomizer.config.Config;
-import de.gamdude.randomizer.ui.base.LeaderboardObject;
 import de.gamdude.randomizer.world.PlatformLoader;
 
 import java.util.*;
@@ -38,14 +36,13 @@ public class LeaderboardHandler implements Handler {
                 endRange++;
             }
 
-            LeaderboardObject leaderboardObject = new LeaderboardObject(playerPosition);
-
             // Players before and after
+            List<UUID> leaderboardExtract = new ArrayList<>();
             if (startRange > 0)
-                leaderboardObject.addPlayer(sortedPlayers.get(startRange - 1));
-            leaderboardObject.addPlayer(uuid);
+                leaderboardExtract.add(sortedPlayers.get(startRange - 1));
+            leaderboardExtract.add(uuid);
             if (endRange < sortedPlayers.size() - 1)
-                leaderboardObject.addPlayer(sortedPlayers.get(endRange + 1));
+                leaderboardExtract.add(sortedPlayers.get(endRange + 1));
 
             return startRange + 1;
         }
@@ -60,13 +57,13 @@ public class LeaderboardHandler implements Handler {
                 .toList();
     }
 
-    public LeaderboardObject getTopPlayers() {
-        LeaderboardObject leaderboardObject = new LeaderboardObject(1);
+    public List<UUID> getTopPlayers() {
+        List<UUID> leaderboardTop = new ArrayList<>();
         List<UUID> sortedPlayers = getSortedPlayer();
         for(int i = 0; i < Math.min(5, sortedPlayers.size()); ++i) {
-            leaderboardObject.addPlayer(sortedPlayers.get(i));
+            leaderboardTop.add(sortedPlayers.get(i));
         }
-        return leaderboardObject;
+        return leaderboardTop;
     }
 
 }

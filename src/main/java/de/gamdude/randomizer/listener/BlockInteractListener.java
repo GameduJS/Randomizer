@@ -12,7 +12,6 @@ import org.bukkit.block.data.type.Bed;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
-import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 
 import java.util.ArrayList;

@@ -6,7 +6,6 @@ import de.gamdude.randomizer.config.Config;
 import de.gamdude.randomizer.listener.*;
 import de.gamdude.randomizer.world.VoidWorldGenerator;
 import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
