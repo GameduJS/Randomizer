@@ -4,7 +4,7 @@ The player who bridges the furthest in a given time with random item/block drops
 
 ## How to use the plugin
 - Download the plugin
-- Prepare a paper server (1.20.2)
+- Prepare a paper server (1.20.4)
 - Put the plugin into the plugins folder
 - Startup the server and close it when it is loaded
 - Add the following to ``Bukkit.yml``:

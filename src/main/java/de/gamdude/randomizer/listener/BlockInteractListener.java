@@ -42,7 +42,7 @@ public class BlockInteractListener implements Listener {
         }
         // If enabled 'canBreakBlock' players can break any block
         if (Option.ENABLE_BREAK_BLOCK.getValue().getAsBoolean()) {
-            placedBlocksHashList.remove(event.getBlock().getLocation().hashCode());
+            placedBlocksHashList.remove(event.getBlock().getLocation());
             return;
         }
         // If block was placed & players cannot break blocks, disallow it.
