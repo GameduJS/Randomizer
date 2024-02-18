@@ -9,6 +9,7 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -22,7 +23,7 @@ public class ItemBuilder {
 
 	private Component displayName;
 	private final ItemStack item;
-	private final ItemMeta meta;
+	private ItemMeta meta;
 	private final List<Component> lore;
 
 
@@ -31,6 +32,12 @@ public class ItemBuilder {
 		this.item = new ItemStack(material);
 		this.meta = item.getItemMeta();
 		this.lore = new ArrayList<>();
+	}
+
+	public ItemBuilder material(Material material) {
+		this.item.setType(material);
+		this.meta = item.getItemMeta();
+		return this;
 	}
 
 	public ItemBuilder addData(String data) {
@@ -45,6 +52,16 @@ public class ItemBuilder {
 
 	public ItemBuilder setLore(String lore) {
 		this.lore.add(miniMessage.deserialize(lore));
+		return this;
+	}
+
+	public ItemBuilder translatable(Player player, String path, String... args) {
+		String[] content = MessageHandler.getString(player, path, args).split(";");
+		if(content.length == 0)
+			throw new IllegalArgumentException("Cannot add translatable text to item: " + path);
+		setDisplayName(content[0]);
+		for(int i = 1; i < content.length; ++i)
+			setLore(content[i]);
 		return this;
 	}
 

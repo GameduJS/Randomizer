@@ -1,6 +1,6 @@
 package de.gamdude.randomizer.ui.menu;
 
-import de.gamdude.randomizer.base.GameDispatcher;
+import de.gamdude.randomizer.game.handler.GameDispatcher;
 import de.gamdude.randomizer.game.goals.GoalHandler;
 import de.gamdude.randomizer.config.Config;
 import de.gamdude.randomizer.game.options.Option;
@@ -23,6 +23,15 @@ public class ConfigMenu extends Menu {
 
     @Override
     public boolean onClick(Player player, int slot, ClickType type) {
+        if(gameDispatcher.getState() == 3) {
+            player.sendMessage(miniMessage.deserialize("<red><b>Game already has been ended!"));
+            return true;
+        }
+        if(gameDispatcher.getState() == 1) {
+            player.sendMessage(miniMessage.deserialize("<red><b>Please pause the game to change the settings"));
+            return true;
+        }
+
         switch (slot) {
             case 19 -> Option.CHANGE_ITEM_COOLDOWN.openConfigMenu(player, this);
             case 13 -> {
@@ -37,6 +46,7 @@ public class ConfigMenu extends Menu {
             case 23 -> Option.ENABLE_BREAK_BLOCK.toggleOption(player, inventory, type, slot);
             case 24 -> Option.BLOCK_DROP.toggleOption(player, inventory, type, slot);
             case 20 -> Option.CHANGE_FIRST_DROP_DELAY.openConfigMenu(player, this);
+            case 31 -> Option.EXCLUDED_ITEMS.openConfigMenu(player, this);
         }
         return true;
     }
@@ -54,12 +64,18 @@ public class ConfigMenu extends Menu {
         inventory.setItem(23, Option.ENABLE_BREAK_BLOCK.getDisplayItem(player));
         inventory.setItem(24, Option.BLOCK_DROP.getDisplayItem(player));
         inventory.setItem(25, Option.ENABLE_HUNGER.getDisplayItem(player));
+        
+        inventory.setItem(31, Option.EXCLUDED_ITEMS.getDisplayItem(player));
 
         fill(new ItemBuilder(Material.WHITE_STAINED_GLASS_PANE).setDisplayName("").addItemFlag(ItemFlag.HIDE_ATTRIBUTES).build());
     }
 
     @Override
-    public void onClose(Player player) { }
+    public void onClose(Player player) {
+        if(gameDispatcher.getState() == 2) {
+            gameDispatcher.reloadConfig();
+        }
+    }
 
 
 }

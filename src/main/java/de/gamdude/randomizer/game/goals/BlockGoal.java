@@ -1,17 +1,15 @@
 package de.gamdude.randomizer.game.goals;
 
-import de.gamdude.randomizer.base.GameDispatcher;
-import de.gamdude.randomizer.base.LeaderboardHandler;
-import de.gamdude.randomizer.base.PlayerProgressTracker;
+import de.gamdude.randomizer.game.handler.GameDispatcher;
+import de.gamdude.randomizer.game.handler.LeaderboardHandler;
+import de.gamdude.randomizer.game.handler.PlayerProgressTracker;
 import de.gamdude.randomizer.config.Config;
 import de.gamdude.randomizer.game.options.Option;
-import de.gamdude.randomizer.utils.ItemBuilder;
+import de.gamdude.randomizer.ui.menu.Menu;
+import de.gamdude.randomizer.ui.menu.SetIndividualValueMenu;
 import de.gamdude.randomizer.utils.MessageHandler;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.inventory.ClickType;
-
-import java.util.UUID;
+import org.jetbrains.annotations.Nullable;
 
 public class BlockGoal extends Goal {
 
@@ -20,7 +18,7 @@ public class BlockGoal extends Goal {
     private int blocksToBuild;
 
     public BlockGoal(GameDispatcher gameDispatcher) {
-        super(gameDispatcher,"<yellow>Blocks <gray>to be built!", "blockToGoal", "Block Goal");
+        super(gameDispatcher, "blockToGoal", "Block Goal");
         this.playerProgressTracker = gameDispatcher.getHandler(PlayerProgressTracker.class);
         this.leaderboardHandler = gameDispatcher.getHandler(LeaderboardHandler.class);
     }
@@ -36,8 +34,8 @@ public class BlockGoal extends Goal {
     }
 
     @Override
-    public String getScoreboardGoalValue(UUID uuid) {
-        return "<yellow>" + (blocksToBuild);
+    public String getScoreboardGoalValue(Player player, boolean initial) {
+        return MessageHandler.getString(player, "scoreboardBlockGoalValue", blocksToBuild + "");
     }
 
     @Override
@@ -46,21 +44,7 @@ public class BlockGoal extends Goal {
     }
 
     @Override
-    public boolean onClick(Player player, int slot, ClickType type) {
-        if(slot - 1 > 0)
-            return true;
-        Option.BLOCKS_TO_PLACE.toggleOption(player, inventory, type, slot);
-        return true;
+    public Menu getConfigMenu(Player player, @Nullable Menu parent) {
+        return new SetIndividualValueMenu(config, MessageHandler.getString(player, "configBlockGoalTitle"), configKey, parent).setDisplayStackSupplier(() -> Option.BLOCKS_TO_PLACE.getDisplayItem(player));
     }
-
-    @Override
-    public void onOpen(Player player) {
-        inventory.setItem(8, Option.BLOCKS_TO_PLACE.getDisplayItem(player));
-
-        inventory.setItem(0, new ItemBuilder(Material.WHITE_WOOL).setDisplayName("<green>Increase<gray> / <red>Decrease")
-                .setLore("").setLore("<yellow>Right-Click <gray>to decrease value by <yellow>1").setLore("<yellow>Left-Click <gray>to increase value by <yellow>1").build());
-        inventory.setItem(1, new ItemBuilder(Material.GRAY_WOOL).setDisplayName("<green>Increase<gray> / <red>Decrease")
-                .setLore("").setLore("<yellow>Right-Click <gray>to decrease value by <yellow>50").setLore("<yellow>Left-Click <gray>to increase value by <yellow>50").build());
-    }
-
 }

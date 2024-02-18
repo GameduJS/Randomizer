@@ -43,4 +43,8 @@ public abstract class Menu implements InventoryHolder {
     public @NotNull Inventory getInventory() {
         return this.inventory;
     }
+
+    public boolean allowPlayerInventoryInteraction() {
+        return false;
+    }
 }

@@ -1,6 +1,6 @@
 package de.gamdude.randomizer.commands;
 
-import de.gamdude.randomizer.base.GameDispatcher;
+import de.gamdude.randomizer.game.handler.GameDispatcher;
 import de.gamdude.randomizer.ui.menu.ConfigMenu;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;

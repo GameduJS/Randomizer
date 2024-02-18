@@ -1,6 +1,6 @@
 package de.gamdude.randomizer.listener;
 
-import de.gamdude.randomizer.base.GameDispatcher;
+import de.gamdude.randomizer.game.handler.GameDispatcher;
 import de.gamdude.randomizer.utils.MessageHandler;
 import de.gamdude.randomizer.world.PlatformLoader;
 import org.bukkit.Bukkit;
@@ -27,16 +27,16 @@ public class PlayerMoveListener implements Listener {
     public void onMove(PlayerMoveEvent event) {
         Player player = event.getPlayer();
 
+        if(player.getGameMode() != GameMode.SURVIVAL)
+            return;
+
         if(event.getTo().getBlockY() <= 20) {
             player.teleport(platformLoader.getPlatform(player.getUniqueId()).getPlatformLocation());
             player.setVelocity(new Vector(0,0,0));
             player.setFallDistance(0f);
-            if(player.getGameMode() == GameMode.SURVIVAL && gameDispatcher.getState() == 1)
+            if(gameDispatcher.getState() == 1)
                 Bukkit.getOnlinePlayers().forEach(onlinePlayer -> MessageHandler.sendMessage(onlinePlayer, "playerFell", player.getName()));
         }
-
-        if(player.getGameMode() != GameMode.SURVIVAL)
-            return;
 
         if(gameDispatcher.getState() == 0 || gameDispatcher.getState() == 2) {
             if(event.hasChangedBlock()) {

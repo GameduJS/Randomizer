@@ -1,6 +1,6 @@
 package de.gamdude.randomizer;
 
-import de.gamdude.randomizer.base.GameDispatcher;
+import de.gamdude.randomizer.game.handler.GameDispatcher;
 import de.gamdude.randomizer.commands.GameCommand;
 import de.gamdude.randomizer.config.Config;
 import de.gamdude.randomizer.listener.*;

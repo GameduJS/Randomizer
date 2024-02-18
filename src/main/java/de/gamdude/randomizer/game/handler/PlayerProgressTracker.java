@@ -1,4 +1,4 @@
-package de.gamdude.randomizer.base;
+package de.gamdude.randomizer.game.handler;
 
 import de.gamdude.randomizer.world.Platform;
 import de.gamdude.randomizer.world.PlatformLoader;

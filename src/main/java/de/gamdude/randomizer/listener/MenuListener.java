@@ -15,15 +15,15 @@ public record MenuListener(Randomizer plugin) implements Listener {
     @EventHandler(ignoreCancelled = true)
     private void onClick(InventoryClickEvent event) {
     	final InventoryHolder holder = event.getInventory().getHolder();
-        if (!(holder instanceof Menu)) return;
+        if (!(holder instanceof Menu menu)) return;
         if(event.getCurrentItem() == null) return;
         if(event.getClickedInventory() == null) return;
         if(event.getCurrentItem().getType() == Material.AIR) return;
-        if(event.getClickedInventory().getType().equals(InventoryType.PLAYER)) {
+        if(event.getClickedInventory().getType().equals(InventoryType.PLAYER) && !menu.allowPlayerInventoryInteraction()) {
         	event.setCancelled(true);
         	return;
         }
-        event.setCancelled(((Menu) holder).onClick((Player)event.getWhoClicked(), event.getRawSlot(), event.getClick()));
+        event.setCancelled(menu.onClick((Player)event.getWhoClicked(), event.getRawSlot(), event.getClick()));
     }
 
     @EventHandler 

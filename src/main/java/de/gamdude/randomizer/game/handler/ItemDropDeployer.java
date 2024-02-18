@@ -1,11 +1,13 @@
-package de.gamdude.randomizer.base;
+package de.gamdude.randomizer.game.handler;
 
 import com.google.gson.JsonElement;
 import de.gamdude.randomizer.world.Platform;
 import de.gamdude.randomizer.config.Config;
 import de.gamdude.randomizer.world.PlatformLoader;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
@@ -38,7 +40,10 @@ public class ItemDropDeployer implements Handler {
         dropDelay = config.getProperty("firstItemDropDelay").getAsInt();
         dropCooldown = config.getProperty("itemCooldown").getAsInt();
 
-        MATERIALS = Arrays.stream(Material.values()).filter(Predicate.not(Material::isLegacy)).filter(Material::isItem).filter(Predicate.not(ignoredMaterials::contains)).toArray(Material[]::new);
+        World world = Objects.requireNonNull(Bukkit.getWorld("world"), "World 'world' is null!");
+
+        MATERIALS = Arrays.stream(Material.values()).filter(Predicate.not(Material::isLegacy)).filter(Material::isItem).filter(Predicate.not(ignoredMaterials::contains))
+                .filter(material -> material.isEnabledByFeature(world)).toArray(Material[]::new);
     }
 
     public void dropItem(Location location) {

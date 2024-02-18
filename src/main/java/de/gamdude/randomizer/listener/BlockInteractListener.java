@@ -1,9 +1,9 @@
 package de.gamdude.randomizer.listener;
 
 import com.destroystokyo.paper.event.block.BlockDestroyEvent;
-import de.gamdude.randomizer.base.GameDispatcher;
-import de.gamdude.randomizer.base.LeaderboardHandler;
-import de.gamdude.randomizer.base.PlayerProgressTracker;
+import de.gamdude.randomizer.game.handler.GameDispatcher;
+import de.gamdude.randomizer.game.handler.LeaderboardHandler;
+import de.gamdude.randomizer.game.handler.PlayerProgressTracker;
 import de.gamdude.randomizer.game.options.Option;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BlockInteractListener implements Listener {
-    private final List<Location> placedBlocksHashList = new ArrayList<>();
+    private final List<Location> placedBlocksList = new ArrayList<>();
 
     private final GameDispatcher gameDispatcher;
     private final PlayerProgressTracker playerProgressTracker;
@@ -41,10 +41,9 @@ public class BlockInteractListener implements Listener {
             return;
         }
         // If enabled 'canBreakBlock' players can break any block
-        if (Option.ENABLE_BREAK_BLOCK.getValue().getAsBoolean()) {
-            placedBlocksHashList.remove(event.getBlock().getLocation());
+        if (Option.ENABLE_BREAK_BLOCK.getValue().getAsBoolean())
             return;
-        }
+
         // If block was placed & players cannot break blocks, disallow it.
         if(isPlacedBlock(event.getBlock()))
             event.setCancelled(true);
@@ -52,23 +51,26 @@ public class BlockInteractListener implements Listener {
 
     @EventHandler
     public void onTreeGrowth(StructureGrowEvent event) {
-        placedBlocksHashList.remove(event.getLocation());
+        placedBlocksList.remove(event.getLocation());
     }
 
     @EventHandler
     public void onBuild(BlockPlaceEvent event) {
+        // Prevent building on top of the start position
         if(event.getBlockPlaced().getX() % 16 == 7 && event.getBlockPlaced().getZ() == 0) {
             event.setCancelled(true);
             return;
         }
 
+        // disable placing as player when out of playing state
         if (gameDispatcher.getState() != 1 && event.getPlayer().getGameMode() == GameMode.SURVIVAL) {
             event.setCancelled(true);
             return;
         }
+
         Block block = event.getBlock();
 
-        placedBlocksHashList.add(block.getLocation());
+        placedBlocksList.add(block.getLocation());
         int zOff = (block.getType().data == Bed.class) ? ((Bed) block.getBlockData()).getFacing().getModZ() : 0;
         Location placedBlockLocation = block.getLocation().clone().add(0, 0, zOff);
 
@@ -78,18 +80,20 @@ public class BlockInteractListener implements Listener {
 
     @EventHandler
     public void onDrop(BlockDropItemEvent event) {
-        if (isPlacedBlock(event.getBlock()) && !Option.BLOCK_DROP.getValue().getAsBoolean())
+        if (isPlacedBlock(event.getBlock()) && !Option.BLOCK_DROP.getValue().getAsBoolean()) {
+            placedBlocksList.remove(event.getBlock().getLocation());
             event.setCancelled(true);
+        }
     }
 
     // Water breaking skulls
     @EventHandler
     public void onBlockDestroy(BlockDestroyEvent e) {
-        e.setWillDrop(false);
+        e.setWillDrop(Option.BLOCK_DROP.getValue().getAsBoolean());
     }
 
     private boolean isPlacedBlock(Block block) {
-        return placedBlocksHashList.contains(block.getLocation()) || block.getBlockData() instanceof Bed bed && placedBlocksHashList.contains(block.getLocation().clone().subtract(bed.getFacing().getModX(), 0, bed.getFacing().getModZ()));
+        return placedBlocksList.contains(block.getLocation()) || (block.getBlockData() instanceof Bed bed && placedBlocksList.contains(block.getLocation().clone().subtract(bed.getFacing().getModX(), 0, bed.getFacing().getModZ())));
     }
 
 }

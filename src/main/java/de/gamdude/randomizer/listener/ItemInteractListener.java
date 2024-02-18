@@ -1,6 +1,6 @@
 package de.gamdude.randomizer.listener;
 
-import de.gamdude.randomizer.base.GameDispatcher;
+import de.gamdude.randomizer.game.handler.GameDispatcher;
 import de.gamdude.randomizer.ui.menu.ConfigMenu;
 import de.gamdude.randomizer.utils.ItemBuilder;
 import org.apache.commons.lang3.NotImplementedException;

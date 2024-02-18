@@ -1,4 +1,4 @@
-package de.gamdude.randomizer.base;
+package de.gamdude.randomizer.game.handler;
 
 import de.gamdude.randomizer.Randomizer;
 import de.gamdude.randomizer.game.goals.GoalHandler;
@@ -60,6 +60,10 @@ public class GameDispatcher {
      */
     private void loadConfig() {
         this.handlerMap.values().forEach(handler -> handler.loadConfig(config));
+    }
+
+    public void reloadConfig() {
+        this.loadConfig();
     }
 
     /**

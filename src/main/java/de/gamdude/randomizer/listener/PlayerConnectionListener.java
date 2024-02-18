@@ -2,11 +2,12 @@ package de.gamdude.randomizer.listener;
 
 import de.gamdude.randomizer.utils.ItemBuilder;
 import de.gamdude.randomizer.world.Platform;
-import de.gamdude.randomizer.base.GameDispatcher;
+import de.gamdude.randomizer.game.handler.GameDispatcher;
 import de.gamdude.randomizer.utils.MessageHandler;
 import de.gamdude.randomizer.world.PlatformLoader;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -35,8 +36,8 @@ public class PlayerConnectionListener implements Listener {
         player.teleport(platform.getPlatformLocation());
         gameDispatcher.getRandomizerScoreboard().setScoreboard(player);
 
-        if(Bukkit.getOnlinePlayers().size() == 1)
-            setSettingsItems(player);
+       if(Bukkit.getOperators().size() == 1 && player.isOp())
+           setSettingsItems(player);
 
         event.joinMessage(null);
         Bukkit.getOnlinePlayers().forEach(onlinePlayer -> MessageHandler.sendMessage(onlinePlayer, "joinMessage", player.getName()));

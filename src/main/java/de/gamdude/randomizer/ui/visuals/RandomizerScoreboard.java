@@ -1,9 +1,8 @@
 package de.gamdude.randomizer.ui.visuals;
 
-import de.gamdude.randomizer.base.GameDispatcher;
-import de.gamdude.randomizer.base.LeaderboardHandler;
-import de.gamdude.randomizer.base.PlayerProgressTracker;
-import de.gamdude.randomizer.game.goals.Goal;
+import de.gamdude.randomizer.game.handler.GameDispatcher;
+import de.gamdude.randomizer.game.handler.LeaderboardHandler;
+import de.gamdude.randomizer.game.handler.PlayerProgressTracker;
 import de.gamdude.randomizer.game.goals.GoalHandler;
 import de.gamdude.randomizer.utils.MessageHandler;
 import de.gamdude.randomizer.utils.TimeConverter;
@@ -17,12 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * TODO: <p></p>
- * - Clean up scoreboard <br>
- * - Make it easier to add/edit entries <br>
- * - Edit general design (take {@link  Goal} into account)
- */
 public class RandomizerScoreboard {
 
     private final MiniMessage miniMessage = MiniMessage.miniMessage();
@@ -79,11 +72,11 @@ public class RandomizerScoreboard {
         }
         scoreBuilder.add(new RScore.Builder().blankScore(8));
         scoreBuilder.add(new RScore.Builder().score(7).prefix(MessageHandler.getString(player, "scoreboardPreGoalTitle")));
-        scoreBuilder.add(new RScore.Builder().score(6).prefix("<gray>>").suffix(MessageHandler.getString(player, "scoreboardNotStarted"))
+        scoreBuilder.add(new RScore.Builder().score(6).prefix("  <gray>>").suffix(MessageHandler.getString(player, "scoreboardNotStarted"))
                 .onUpdate((team, integer) -> team.suffix(miniMessage.deserialize(goalHandler.getActiveGoal().getScoreboardGoalDescription(player)))));
 
-        scoreBuilder.add(new RScore.Builder().score(5).prefix("<gray>>").suffix(MessageHandler.getString(player, "scoreboardNotStarted"))
-                .onUpdate((team, integer) -> team.suffix(miniMessage.deserialize(goalHandler.getActiveGoal().getScoreboardGoalValue(player.getUniqueId())))));
+        scoreBuilder.add(new RScore.Builder().score(5).prefix("  <gray>>").suffix(MessageHandler.getString(player, "scoreboardNotStarted"))
+                .onUpdate((team, integer) -> team.suffix(miniMessage.deserialize(goalHandler.getActiveGoal().getScoreboardGoalValue(player, false)))));
 
         scoreBuilder.add(new RScore.Builder().blankScore(4));
         scoreBuilder.add(new RScore.Builder().blankScore(3));

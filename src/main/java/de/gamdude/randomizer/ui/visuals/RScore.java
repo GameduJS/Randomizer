@@ -1,6 +1,6 @@
 package de.gamdude.randomizer.ui.visuals;
 
-import de.gamdude.randomizer.base.GameDispatcher;
+import de.gamdude.randomizer.game.handler.GameDispatcher;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -80,8 +80,8 @@ public class RScore {
             return this;
         }
 
-        public Builder onUpdate(BiConsumer<Team, Integer> teamConsumer) {
-            this.teamConsumer = teamConsumer;
+        public Builder onUpdate(BiConsumer<Team, Integer> teamSecondsConsumer) {
+            this.teamConsumer = teamSecondsConsumer;
             return this;
         }
 

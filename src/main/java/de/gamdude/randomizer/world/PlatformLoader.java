@@ -1,6 +1,6 @@
 package de.gamdude.randomizer.world;
 
-import de.gamdude.randomizer.base.Handler;
+import de.gamdude.randomizer.game.handler.Handler;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
