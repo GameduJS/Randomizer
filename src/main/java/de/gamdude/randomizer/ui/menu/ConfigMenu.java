@@ -24,7 +24,7 @@ public class ConfigMenu extends Menu {
     @Override
     public boolean onClick(Player player, int slot, ClickType type) {
         if(gameDispatcher.getState() == 3) {
-            player.sendMessage(miniMessage.deserialize("<red><b>Game already has been ended!"));
+            player.sendMessage(miniMessage.deserialize("<red><b>The game has already ended!"));
             return true;
         }
         if(gameDispatcher.getState() == 1) {
