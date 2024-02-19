@@ -33,6 +33,7 @@ public final class Randomizer extends JavaPlugin {
         pluginManager.registerEvents(new PlayerListener(gameDispatcher), this);
         pluginManager.registerEvents(new WorldLoadListener(), this);
         pluginManager.registerEvents(new ItemInteractListener(gameDispatcher), this);
+        pluginManager.registerEvents(new CommandPreProcessListener(gameDispatcher), this);
 
         Objects.requireNonNull(getCommand("game")).setExecutor(new GameCommand(gameDispatcher));
     }

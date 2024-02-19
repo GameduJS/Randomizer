@@ -18,12 +18,14 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class PlayerListener implements Listener {
 
+    private final GameDispatcher gameDispatcher;
     private final PlatformLoader platformLoader;
     private final RandomizerScoreboard randomizerScoreboard;
 
     public PlayerListener(GameDispatcher gameDispatcher) {
-        this.platformLoader = gameDispatcher.getHandler(PlatformLoader.class);
+        this.gameDispatcher = gameDispatcher;
         this.randomizerScoreboard = gameDispatcher.getRandomizerScoreboard();
+        this.platformLoader = gameDispatcher.getHandler(PlatformLoader.class);
     }
 
     @EventHandler
@@ -53,11 +55,14 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onLocaleChange(PlayerLocaleChangeEvent e) {
         MessageHandler.registerLanguage(e.getPlayer());
-        new BukkitRunnable() {
-            @Override
-            public void run() {
-                randomizerScoreboard.setScoreboard(e.getPlayer());
-            }
-        }.runTaskLater(Randomizer.getPlugin(Randomizer.class), 1);
+            new BukkitRunnable() {
+                @Override
+                public void run() {
+                   if(gameDispatcher.getState() == 0)
+                       randomizerScoreboard.setScoreboard(e.getPlayer());
+                   else
+                       randomizerScoreboard.updateScoreboard();
+                }
+            }.runTaskLater(Randomizer.getPlugin(Randomizer.class), 1);
     }
 }
