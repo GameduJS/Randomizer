@@ -1,5 +1,6 @@
 package de.gamdude.randomizer.listener;
 
+import de.gamdude.randomizer.Randomizer;
 import de.gamdude.randomizer.game.handler.GameDispatcher;
 import de.gamdude.randomizer.game.options.Option;
 import de.gamdude.randomizer.ui.visuals.RandomizerScoreboard;
@@ -13,6 +14,7 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerLocaleChangeEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 public class PlayerListener implements Listener {
 
@@ -51,5 +53,11 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onLocaleChange(PlayerLocaleChangeEvent e) {
         MessageHandler.registerLanguage(e.getPlayer());
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                randomizerScoreboard.setScoreboard(e.getPlayer());
+            }
+        }.runTaskLater(Randomizer.getPlugin(Randomizer.class), 1);
     }
 }
