@@ -1,7 +1,7 @@
 package de.gamdude.randomizer.commands;
 
-import de.gamdude.randomizer.base.GameDispatcher;
-import de.gamdude.randomizer.ui.ConfigMenu;
+import de.gamdude.randomizer.game.handler.GameDispatcher;
+import de.gamdude.randomizer.ui.menu.ConfigMenu;
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
@@ -21,9 +21,8 @@ public class GameCommand implements TabExecutor {
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
-        if(args.length == 0)
+        if(args.length != 1)
             return false;
-
         String state = args[0];
 
         switch (state) {

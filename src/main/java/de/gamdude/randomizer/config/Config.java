@@ -4,14 +4,15 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import de.gamdude.randomizer.game.options.Option;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.plugin.Plugin;
 
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,8 +30,9 @@ public class Config {
 
         if(file.length() == 0)
             writeToFile("{}");
-        this.loadPropertiesFromFile();
-        this.loadDefaultProperties();
+        this.loadDefaultProperties(); // load defaults
+        this.loadPropertiesFromFile(); // override values
+        Runtime.getRuntime().addShutdownHook(new Thread(this::savePropertiesToFile));
     }
 
     private void loadPropertiesFromFile() {
@@ -65,14 +67,7 @@ public class Config {
         this.properties.put(key, element);
     }
 
-    public void removeProperty(String key) {
-        properties.remove(key);
-    }
-
-    public boolean hasProperty(String key) {
-        return properties.containsKey(key);
-    }
-
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     private File getOrCreateFile(String fileName) {
         File file = new File(plugin.getDataFolder(), "/" + fileName + ".json");
         file.getParentFile().mkdirs();
@@ -94,19 +89,7 @@ public class Config {
     }
 
     private void loadDefaultProperties() {
-        Map<String, Object> defaultProperties = new HashMap<>();
-        defaultProperties.put("itemCooldown", 15);
-        defaultProperties.put("firstItemDropDelay", 5);
-        defaultProperties.put("excludedItems", new String[]{"LIGHT"});
-        defaultProperties.put("canBreakBlock", true);
-        defaultProperties.put("canGetHungry", false);
-        defaultProperties.put("playTime", 900);
-        defaultProperties.put("spawnWithDefaults", true);
-
-        defaultProperties.forEach((key, object) -> {
-            if(!hasProperty(key))
-                addProperty(key, object);
-        });
+        Arrays.stream(Option.values()).forEach(option -> addProperty(option.configKey, option.defaultValue));
     }
 
 }

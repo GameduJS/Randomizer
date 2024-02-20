@@ -1,17 +1,16 @@
-package de.gamdude.randomizer.base;
+package de.gamdude.randomizer.game.handler;
 
-import de.gamdude.randomizer.ui.base.LeaderboardObject;
 import de.gamdude.randomizer.world.PlatformLoader;
 
 import java.util.*;
 
-public class LeaderboardHandler {
+public class LeaderboardHandler implements Handler {
 
     private final PlatformLoader platformLoader;
     private final Map<UUID, Integer> positionPlayerMap;
 
     public LeaderboardHandler(GameDispatcher gameDispatcher) {
-        this.platformLoader = gameDispatcher.getPlatformLoader();
+        this.platformLoader = gameDispatcher.getHandler(PlatformLoader.class);
         this.positionPlayerMap = new HashMap<>();
     }
 
@@ -37,14 +36,13 @@ public class LeaderboardHandler {
                 endRange++;
             }
 
-            LeaderboardObject leaderboardObject = new LeaderboardObject(playerPosition);
-
             // Players before and after
+            List<UUID> leaderboardExtract = new ArrayList<>();
             if (startRange > 0)
-                leaderboardObject.addPlayer(sortedPlayers.get(startRange - 1));
-            leaderboardObject.addPlayer(uuid);
+                leaderboardExtract.add(sortedPlayers.get(startRange - 1));
+            leaderboardExtract.add(uuid);
             if (endRange < sortedPlayers.size() - 1)
-                leaderboardObject.addPlayer(sortedPlayers.get(endRange + 1));
+                leaderboardExtract.add(sortedPlayers.get(endRange + 1));
 
             return startRange + 1;
         }
@@ -59,12 +57,13 @@ public class LeaderboardHandler {
                 .toList();
     }
 
-    public LeaderboardObject getTopPlayers() {
-        LeaderboardObject leaderboardObject = new LeaderboardObject(1);
+    public List<UUID> getTopPlayers() {
+        List<UUID> leaderboardTop = new ArrayList<>();
         List<UUID> sortedPlayers = getSortedPlayer();
         for(int i = 0; i < Math.min(5, sortedPlayers.size()); ++i) {
-            leaderboardObject.addPlayer(sortedPlayers.get(i));
+            leaderboardTop.add(sortedPlayers.get(i));
         }
-        return leaderboardObject;
+        return leaderboardTop;
     }
+
 }

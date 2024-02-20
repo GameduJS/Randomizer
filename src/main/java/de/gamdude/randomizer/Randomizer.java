@@ -1,6 +1,6 @@
 package de.gamdude.randomizer;
 
-import de.gamdude.randomizer.base.GameDispatcher;
+import de.gamdude.randomizer.game.handler.GameDispatcher;
 import de.gamdude.randomizer.commands.GameCommand;
 import de.gamdude.randomizer.config.Config;
 import de.gamdude.randomizer.listener.*;
@@ -18,24 +18,28 @@ import java.util.Objects;
 
 public final class Randomizer extends JavaPlugin {
 
-    public final Config config = new Config(this, "randomizer");
     private final PluginManager pluginManager = Bukkit.getPluginManager();
 
     @Override
     public void onEnable() {
-        GameDispatcher gameDispatcher = new GameDispatcher(this);
+         Config config = new Config(this, "randomizer");
+         GameDispatcher gameDispatcher = new GameDispatcher(this, config);
+
         pluginManager.registerEvents(new PlayerConnectionListener(gameDispatcher), this);
         pluginManager.registerEvents(new PlayerMoveListener(gameDispatcher), this);
         pluginManager.registerEvents(new EntitySpawnListener(), this);
         pluginManager.registerEvents(new BlockInteractListener(gameDispatcher), this);
         pluginManager.registerEvents(new MenuListener(this), this);
         pluginManager.registerEvents(new PlayerListener(gameDispatcher), this);
+        pluginManager.registerEvents(new WorldLoadListener(), this);
+        pluginManager.registerEvents(new ItemInteractListener(gameDispatcher), this);
+        pluginManager.registerEvents(new CommandPreProcessListener(gameDispatcher), this);
 
-        getCommand("game").setExecutor(new GameCommand(gameDispatcher));
+        Objects.requireNonNull(getCommand("game")).setExecutor(new GameCommand(gameDispatcher));
     }
+
     @Override
     public void onDisable() {
-        config.savePropertiesToFile();
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
                 FileUtils.deleteDirectory(Objects.requireNonNull(Bukkit.getWorld("world")).getWorldFolder()) ;
@@ -46,11 +50,7 @@ public final class Randomizer extends JavaPlugin {
     }
 
     @Override
-    public @Nullable ChunkGenerator getDefaultWorldGenerator(@NotNull String worldName, @Nullable String id) {
+    public @NotNull ChunkGenerator getDefaultWorldGenerator(@NotNull String worldName, @Nullable String id) {
         return new VoidWorldGenerator();
-    }
-
-    public Config getConfiguration() {
-        return config;
     }
 }
