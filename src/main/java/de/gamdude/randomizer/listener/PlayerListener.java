@@ -35,6 +35,8 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onDeath(PlayerDeathEvent event) {
+        if(!Option.KEEP_INVENTORY.getValue().getAsBoolean())
+            event.getPlayer().getInventory().clear();
         event.setCancelled(true);
         event.getPlayer().spigot().respawn();
     }
@@ -47,9 +49,13 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onPVP(EntityDamageByEntityEvent e) {
-        if(!Option.ENABLE_PVP.getValue().getAsBoolean())
-            if(e.getDamager() instanceof Player && e.getEntity() instanceof Player)
-                e.setCancelled(true);
+        if(!(e.getDamager() instanceof Player))
+            return;
+        if(!(e.getEntity() instanceof Player))
+            return;
+        if(Option.ENABLE_PVP.getValue().getAsBoolean())
+            return;
+        e.setCancelled(true);
     }
 
     @EventHandler

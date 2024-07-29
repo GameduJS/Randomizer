@@ -37,12 +37,12 @@ public class LeaderboardHandler implements Handler {
             }
 
             // Players before and after
-            List<UUID> leaderboardExtract = new ArrayList<>();
+            /* List<UUID> leaderboardExtract = new ArrayList<>();
             if (startRange > 0)
                 leaderboardExtract.add(sortedPlayers.get(startRange - 1));
             leaderboardExtract.add(uuid);
             if (endRange < sortedPlayers.size() - 1)
-                leaderboardExtract.add(sortedPlayers.get(endRange + 1));
+                leaderboardExtract.add(sortedPlayers.get(endRange + 1)); */
 
             return startRange + 1;
         }

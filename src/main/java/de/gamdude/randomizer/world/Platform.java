@@ -16,7 +16,6 @@ public class Platform {
         this.enabled = true; //default
     }
 
-
     public Location getPlatformLocation() {
         return platformLocation;
     }

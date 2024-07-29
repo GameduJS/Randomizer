@@ -46,7 +46,8 @@ public class ConfigMenu extends Menu {
             case 23 -> Option.ENABLE_BREAK_BLOCK.toggleOption(player, inventory, type, slot);
             case 24 -> Option.BLOCK_DROP.toggleOption(player, inventory, type, slot);
             case 20 -> Option.CHANGE_FIRST_DROP_DELAY.openConfigMenu(player, this);
-            case 31 -> Option.EXCLUDED_ITEMS.openConfigMenu(player, this);
+            case 30 -> Option.EXCLUDED_ITEMS.openConfigMenu(player, this);
+            case 32 -> Option.KEEP_INVENTORY.toggleOption(player, inventory, type, slot);
         }
         return true;
     }
@@ -65,7 +66,8 @@ public class ConfigMenu extends Menu {
         inventory.setItem(24, Option.BLOCK_DROP.getDisplayItem(player));
         inventory.setItem(25, Option.ENABLE_HUNGER.getDisplayItem(player));
         
-        inventory.setItem(31, Option.EXCLUDED_ITEMS.getDisplayItem(player));
+        inventory.setItem(30, Option.EXCLUDED_ITEMS.getDisplayItem(player));
+        inventory.setItem(32, Option.KEEP_INVENTORY.getDisplayItem(player));
 
         fill(new ItemBuilder(Material.WHITE_STAINED_GLASS_PANE).setDisplayName("").addItemFlag(ItemFlag.HIDE_ATTRIBUTES).build());
     }

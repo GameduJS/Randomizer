@@ -6,8 +6,8 @@ import de.gamdude.randomizer.game.handler.GameDispatcher;
 import de.gamdude.randomizer.utils.MessageHandler;
 import de.gamdude.randomizer.world.PlatformLoader;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -31,26 +31,38 @@ public class PlayerConnectionListener implements Listener {
         Player player = event.getPlayer();
         MessageHandler.registerLanguage(player);
 
+        event.joinMessage(null);
+        Bukkit.broadcast(MessageHandler.getMessage(player, "joinMessage", player.getName()));
+
+        // Players that are too late won't have a platform
+        // Players who rejoin will get back to their platform
+        if(gameDispatcher.getState() != 0 && platformLoader.getPlatform(player.getUniqueId()) == null) {
+            player.setGameMode(GameMode.SPECTATOR);
+            MessageHandler.sendMessage(player, "playerTooLate");
+            return;
+        }
+
         Platform platform = platformLoader.createPlatform(player.getUniqueId(), Bukkit.getOnlinePlayers().size());
         platform.setEnabled(true);
         player.teleport(platform.getPlatformLocation());
         gameDispatcher.getRandomizerScoreboard().setScoreboard(player);
 
-       if(Bukkit.getOperators().size() == 1 && player.isOp())
+       if(gameDispatcher.getState() == 0 && Bukkit.getOperators().size() == 1 && player.isOp())
            setSettingsItems(player);
-
-        event.joinMessage(null);
-        Bukkit.getOnlinePlayers().forEach(onlinePlayer -> MessageHandler.sendMessage(onlinePlayer, "joinMessage", player.getName()));
     }
 
     @EventHandler
     public void onLeave(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        if(gameDispatcher.getState() == 1)
-            platformLoader.getPlatform(player.getUniqueId()).setEnabled(false);
 
         event.quitMessage(null);
-        Bukkit.getOnlinePlayers().forEach(onlinePlayer -> MessageHandler.sendMessage(onlinePlayer, "leaveMessage", player.getName()));
+        Bukkit.broadcast(MessageHandler.getMessage(player, "leaveMessage", player.getName()));
+
+        if(gameDispatcher.getState() == 1) {
+            Platform platform = platformLoader.getPlatform(player.getUniqueId());
+            if(platform != null)
+                platform.setEnabled(false);
+        }
     }
 
     private void setSettingsItems(Player player) {
