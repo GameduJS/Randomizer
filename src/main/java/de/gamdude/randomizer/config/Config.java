@@ -43,7 +43,7 @@ public class Config {
                 properties.put(entry.getKey(), entry.getValue());
             }
         } catch ( IOException e ) {
-            Bukkit.getLogger().warning(e.getMessage());
+            Bukkit.getConsoleSender().sendMessage(e.getMessage());
         }
     }
 
@@ -83,8 +83,8 @@ public class Config {
         try (FileWriter fileWriter = new FileWriter(file)) {
             fileWriter.write(content);
         } catch (IOException e) {
-            Bukkit.getLogger().warning("Could not write to file: ");
-            Bukkit.getLogger().warning(e.getMessage());
+            Bukkit.getConsoleSender().sendMessage("Could not write to file: ");
+            Bukkit.getConsoleSender().sendMessage(e.getMessage());
         }
     }
 

@@ -140,9 +140,18 @@ public enum Option {
         @Override
         public ItemStack getDisplayItem(Player player) {
             boolean val = getValue().getAsBoolean();
-            return new ItemBuilder(val ? Material.STONE : Material.COBBLESTONE).translatable(player, "BLOCK_DROP", getStatusString(player)).build();
+            return new ItemBuilder(val ? Material.STONE : Material.LIGHT_GRAY_DYE).translatable(player, "BLOCK_DROP", getStatusString(player)).build();
         }
-    };
+    },
+
+    KEEP_INVENTORY("keepInventory", false) {
+        @Override
+        public ItemStack getDisplayItem(Player player) {
+            boolean val = getValue().getAsBoolean();
+            return new ItemBuilder(val ? Material.ENDER_CHEST : Material.CHEST).translatable(player, "KEEP_INVENTORY", getStatusString(player)).build();
+        }
+    }
+    ;
     //</editor-fold>
 
     private static GameDispatcher gameDispatcher;

@@ -22,7 +22,7 @@ public class ItemBuilder {
 	public static final NamespacedKey ITEM_KEY = new NamespacedKey(Randomizer.getPlugin(Randomizer.class), "customItems");
 
 	private Component displayName;
-	private final ItemStack item;
+	private ItemStack item;
 	private ItemMeta meta;
 	private final List<Component> lore;
 
@@ -35,7 +35,7 @@ public class ItemBuilder {
 	}
 
 	public ItemBuilder material(Material material) {
-		this.item.setType(material);
+		this.item = this.item.withType(material);
 		this.meta = item.getItemMeta();
 		return this;
 	}

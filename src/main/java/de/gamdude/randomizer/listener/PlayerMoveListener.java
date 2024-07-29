@@ -1,6 +1,7 @@
 package de.gamdude.randomizer.listener;
 
 import de.gamdude.randomizer.game.handler.GameDispatcher;
+import de.gamdude.randomizer.game.options.Option;
 import de.gamdude.randomizer.utils.MessageHandler;
 import de.gamdude.randomizer.world.PlatformLoader;
 import org.bukkit.Bukkit;
@@ -34,8 +35,11 @@ public class PlayerMoveListener implements Listener {
             player.teleport(platformLoader.getPlatform(player.getUniqueId()).getPlatformLocation());
             player.setVelocity(new Vector(0,0,0));
             player.setFallDistance(0f);
-            if(gameDispatcher.getState() == 1)
+            if(gameDispatcher.getState() == 1) {
+                if(!Option.KEEP_INVENTORY.getValue().getAsBoolean())
+                    event.getPlayer().getInventory().clear();
                 Bukkit.getOnlinePlayers().forEach(onlinePlayer -> MessageHandler.sendMessage(onlinePlayer, "playerFell", player.getName()));
+            }
         }
 
         if(gameDispatcher.getState() == 0 || gameDispatcher.getState() == 2) {

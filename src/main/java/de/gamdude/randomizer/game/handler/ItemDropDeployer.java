@@ -21,8 +21,8 @@ public class ItemDropDeployer implements Handler {
     private final PlatformLoader platformLoader;
 
     private final List<Material> ignoredMaterials;
-    private Material[] MATERIALS;
-    private final Random RANDOM = ThreadLocalRandom.current();
+    private Material[] materials;
+    private final Random random = ThreadLocalRandom.current();
 
     private int dropDelay;
     private int dropCooldown;
@@ -42,14 +42,14 @@ public class ItemDropDeployer implements Handler {
 
         World world = Objects.requireNonNull(Bukkit.getWorld("world"), "World 'world' is null!");
 
-        MATERIALS = Arrays.stream(Material.values()).filter(Predicate.not(Material::isLegacy)).filter(Material::isItem).filter(Predicate.not(ignoredMaterials::contains))
+        materials = Arrays.stream(Material.values()).filter(Predicate.not(Material::isLegacy)).filter(Material::isItem).filter(Predicate.not(ignoredMaterials::contains))
                 .filter(material -> material.isEnabledByFeature(world)).toArray(Material[]::new);
     }
 
     public void dropItem(Location location) {
-        Material itemMaterial = MATERIALS[RANDOM.nextInt(MATERIALS.length)];
+        Material itemMaterial = materials[random.nextInt(materials.length)];
         Item droppedItem = location.getWorld().dropItem(location, new ItemStack(itemMaterial, 1));
-        droppedItem.setVelocity(new Vector(0, 0, 0));
+        droppedItem.setVelocity(new Vector());
     }
 
     public void dropQueue(long seconds) {
