@@ -48,6 +48,7 @@ public class ConfigMenu extends Menu {
             case 20 -> Option.CHANGE_FIRST_DROP_DELAY.openConfigMenu(player, this);
             case 30 -> Option.EXCLUDED_ITEMS.openConfigMenu(player, this);
             case 32 -> Option.KEEP_INVENTORY.toggleOption(player, inventory, type, slot);
+            case 35 -> Option.DELETE_WORLD.toggleOption(player, inventory, type, slot);
         }
         return true;
     }
@@ -68,6 +69,7 @@ public class ConfigMenu extends Menu {
         
         inventory.setItem(30, Option.EXCLUDED_ITEMS.getDisplayItem(player));
         inventory.setItem(32, Option.KEEP_INVENTORY.getDisplayItem(player));
+        inventory.setItem(35, Option.DELETE_WORLD.getDisplayItem(player));
 
         fill(new ItemBuilder(Material.WHITE_STAINED_GLASS_PANE).setDisplayName("").addItemFlag(ItemFlag.HIDE_ATTRIBUTES).build());
     }

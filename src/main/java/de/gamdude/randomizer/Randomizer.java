@@ -3,6 +3,7 @@ package de.gamdude.randomizer;
 import de.gamdude.randomizer.game.handler.GameDispatcher;
 import de.gamdude.randomizer.commands.GameCommand;
 import de.gamdude.randomizer.config.Config;
+import de.gamdude.randomizer.game.options.Option;
 import de.gamdude.randomizer.listener.*;
 import de.gamdude.randomizer.world.VoidWorldGenerator;
 import org.bukkit.Bukkit;
@@ -15,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Locale;
 import java.util.Objects;
 
 public final class Randomizer extends JavaPlugin {
@@ -23,8 +25,9 @@ public final class Randomizer extends JavaPlugin {
 
     @Override
     public void onEnable() {
-         Config config = new Config(this, "randomizer");
-         GameDispatcher gameDispatcher = new GameDispatcher(this, config);
+        Locale.setDefault(Locale.US);
+        Config config = new Config(this, "randomizer");
+        GameDispatcher gameDispatcher = new GameDispatcher(this, config);
 
         pluginManager.registerEvents(new PlayerConnectionListener(gameDispatcher), this);
         pluginManager.registerEvents(new PlayerMoveListener(gameDispatcher), this);
@@ -34,13 +37,15 @@ public final class Randomizer extends JavaPlugin {
         pluginManager.registerEvents(new PlayerListener(gameDispatcher), this);
         pluginManager.registerEvents(new WorldLoadListener(), this);
         pluginManager.registerEvents(new ItemInteractListener(gameDispatcher), this);
-        pluginManager.registerEvents(new CommandPreProcessListener(gameDispatcher), this);
+        pluginManager.registerEvents(new CommandPreProcessListener(), this);
 
         Objects.requireNonNull(getCommand("game")).setExecutor(new GameCommand(gameDispatcher));
     }
 
     @Override
     public void onDisable() {
+        if ( !Option.DELETE_WORLD.getValue().getAsBoolean() )
+            return;
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             try {
                 FileUtils.deleteDirectory(Objects.requireNonNull(Bukkit.getWorld("world")).getWorldFolder()) ;

@@ -26,7 +26,12 @@ public class GameCommand implements TabExecutor {
         String state = args[0];
 
         switch (state) {
-            case "setting" -> ((Player) sender).openInventory(new ConfigMenu(gameDispatcher).getInventory());
+            case "setting" -> {
+                if ( ! (sender instanceof Player) ) {
+                    return false;
+                }
+                ((Player) sender).openInventory(new ConfigMenu(gameDispatcher).getInventory());
+            }
             case "start" -> gameDispatcher.startGame();
             case "stop" -> gameDispatcher.stopGame();
             case "pause" -> gameDispatcher.pause();

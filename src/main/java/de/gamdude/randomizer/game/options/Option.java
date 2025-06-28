@@ -150,6 +150,15 @@ public enum Option {
             boolean val = getValue().getAsBoolean();
             return new ItemBuilder(val ? Material.ENDER_CHEST : Material.CHEST).translatable(player, "KEEP_INVENTORY", getStatusString(player)).build();
         }
+    },
+
+    // Decides whether the world dic should be deleted
+    DELETE_WORLD("deleteWorld", true) {
+        @Override
+        public ItemStack getDisplayItem(Player player) {
+            boolean val = getValue().getAsBoolean();
+            return new ItemBuilder(val ? Material.MAP : Material.FILLED_MAP).translatable(player, "DELETE_WORLD", getStatusString(player)).build();
+        }
     }
     ;
     //</editor-fold>
