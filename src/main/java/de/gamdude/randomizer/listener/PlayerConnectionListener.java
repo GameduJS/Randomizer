@@ -65,7 +65,7 @@ public class PlayerConnectionListener implements Listener {
         }
     }
 
-    private void setSettingsItems(Player player) {
+    public static void setSettingsItems(Player player) {
         player.getInventory().setItem(0, new ItemBuilder(Material.COMMAND_BLOCK).setDisplayName("<red><b>SETTINGS").setLore("").setLore("<gray>Change the settings of the game").addData("settings-item").addItemFlag(ItemFlag.HIDE_ATTRIBUTES).build());
         player.getInventory().setItem(1, new ItemBuilder(Material.LIME_WOOL).setDisplayName("<green><b>START").setLore("").setLore("<gray>Start the game!").addData("start-item").addItemFlag(ItemFlag.HIDE_ATTRIBUTES).build());
     }
