@@ -78,7 +78,13 @@ public enum Option {
         @Override
         public ItemStack getDisplayItem(Player player) {
             Goal goal = gameDispatcher.getHandler(GoalHandler.class).getActiveGoal();
-            return new ItemBuilder(goal.getClass() == TimeGoal.class ? Material.COMPASS : Material.GRASS_BLOCK).translatable(player, "CHANGE_GOAL", goal.getDisplayName(), goal.getScoreboardGoalValue(player, true)).build();
+            Material material = switch ( goal.getClass().getSimpleName() ) {
+                case "TimeGoal" -> Material.COMPASS;
+                case "BlockGoal" -> Material.GRASS_BLOCK;
+                case "UniqueBlockGoal" -> Material.NETHER_STAR;
+                default -> throw new IllegalStateException("Unexpected value: " + goal.getClass().getSimpleName());
+            };
+            return new ItemBuilder(material).translatable(player, "CHANGE_GOAL", goal.getDisplayName(), goal.getScoreboardGoalValue(player, true)).build();
         }
 
         @Override
@@ -122,6 +128,10 @@ public enum Option {
         public ItemStack getDisplayItem(Player player) {
             return new ItemBuilder(Material.GRASS_BLOCK).translatable(player, "BLOCKS_TO_PLACE", getValue().getAsString()).build();
         }
+    },
+
+    UNIQUE_BLOCKS_TO_PLACE("uniqueBlock", 100) {
+
     },
 
     EXCLUDED_ITEMS("excludedItems", new String[]{"LIGHT"}) {

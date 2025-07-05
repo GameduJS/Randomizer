@@ -5,6 +5,8 @@ import de.gamdude.randomizer.game.handler.GameDispatcher;
 import de.gamdude.randomizer.game.handler.LeaderboardHandler;
 import de.gamdude.randomizer.game.handler.PlayerProgressTracker;
 import de.gamdude.randomizer.game.options.Option;
+import de.gamdude.randomizer.world.Platform;
+import de.gamdude.randomizer.world.PlatformLoader;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -14,20 +16,22 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.world.StructureGrowEvent;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public class BlockInteractListener implements Listener {
-    private final List<Location> placedBlocksList = new ArrayList<>();
 
     private final GameDispatcher gameDispatcher;
     private final PlayerProgressTracker playerProgressTracker;
     private final LeaderboardHandler leaderboardHandler;
+    private final PlatformLoader platformLoader;
 
     public BlockInteractListener(GameDispatcher gameDispatcher) {
         this.gameDispatcher = gameDispatcher;
         this.playerProgressTracker = gameDispatcher.getHandler(PlayerProgressTracker.class);
         this.leaderboardHandler = gameDispatcher.getHandler(LeaderboardHandler.class);
+        this.platformLoader = gameDispatcher.getHandler(PlatformLoader.class);
     }
 
     @EventHandler
@@ -51,7 +55,9 @@ public class BlockInteractListener implements Listener {
 
     @EventHandler
     public void onTreeGrowth(StructureGrowEvent event) {
-        placedBlocksList.remove(event.getLocation());
+        Location location = event.getLocation();
+        platformLoader.getPlatforms().stream().map(Map.Entry::getValue).filter(platform -> platform.locationWithIn(event.getLocation()))
+                .forEach(platform -> platform.getBlocksList().remove(location)); // "forEach" only one platform
     }
 
     @EventHandler
@@ -67,21 +73,22 @@ public class BlockInteractListener implements Listener {
             event.setCancelled(true);
             return;
         }
-
         Block block = event.getBlock();
 
-        placedBlocksList.add(block.getLocation());
-        int zOff = (block.getType().data == Bed.class) ? ((Bed) block.getBlockData()).getFacing().getModZ() : 0;
-        Location placedBlockLocation = block.getLocation().clone().add(0, 0, zOff);
+        //PlatformLoader platformLoader = gameDispatcher.getHandler(PlatformLoader.class);
+        //Location lastBlockBuilt = platformLoader.getPlatform(player.getUniqueId()).getLastBlockBuilt();
+        //Vector vec = block.getLocation().toVector().subtract(lastBlockBuilt.toVector()).normalize();
+        // vec can be (+-1, 0, 0) ; (0, +-1, 0) ; (0, 0, +-1)
+        // only account for positiv z axis (map given) and/or positiv y <== based on goal
 
-        if (playerProgressTracker.placeBlock(event.getPlayer(), placedBlockLocation))
+        if (playerProgressTracker.placeBlock(event.getPlayer(), block))
             leaderboardHandler.updateLeaderboard(event.getPlayer().getUniqueId());
     }
 
     @EventHandler
     public void onDrop(BlockDropItemEvent event) {
         if (isPlacedBlock(event.getBlock()) && !Option.BLOCK_DROP.getValue().getAsBoolean()) {
-            placedBlocksList.remove(event.getBlock().getLocation());
+            getPlacedBlocks().remove(event.getBlock().getLocation());
             event.setCancelled(true);
         }
     }
@@ -93,7 +100,11 @@ public class BlockInteractListener implements Listener {
     }
 
     private boolean isPlacedBlock(Block block) {
-        return placedBlocksList.contains(block.getLocation()) || (block.getBlockData() instanceof Bed bed && placedBlocksList.contains(block.getLocation().clone().subtract(bed.getFacing().getModX(), 0, bed.getFacing().getModZ())));
+        return getPlacedBlocks().contains(block.getLocation()) || (block.getBlockData() instanceof Bed bed && getPlacedBlocks().contains(block.getLocation().clone().subtract(bed.getFacing().getModX(), 0, bed.getFacing().getModZ())));
+    }
+
+    private List<Location> getPlacedBlocks() {
+        return platformLoader.getPlatforms().stream().map(Map.Entry::getValue).map(Platform::getBlocksList).flatMap(List::stream).collect(Collectors.toList());
     }
 
 }

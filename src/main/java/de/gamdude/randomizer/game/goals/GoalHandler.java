@@ -14,7 +14,7 @@ public class GoalHandler implements Handler {
 
     public GoalHandler(GameDispatcher gameDispatcher) {
         this.gameDispatcher = gameDispatcher;
-        this.GOALS = new Goal[]{new TimeGoal(gameDispatcher), new BlockGoal(gameDispatcher)};
+        this.GOALS = new Goal[]{new TimeGoal(gameDispatcher), new BlockGoal(gameDispatcher), new UniqueBlockGoal(gameDispatcher)};
         this.activeGoal = GOALS[0];
     }
 
