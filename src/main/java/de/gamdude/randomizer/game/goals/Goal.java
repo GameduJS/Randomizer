@@ -25,6 +25,8 @@ public abstract class Goal {
 
     public abstract void loadGoalConfig(Config config);
 
+    public abstract String getConfigDisplayValue(Player player);
+
     public abstract String getScoreboardGoalValue(Player player, boolean initial);
 
     public abstract String getScoreboardGoalDescription(Player player);

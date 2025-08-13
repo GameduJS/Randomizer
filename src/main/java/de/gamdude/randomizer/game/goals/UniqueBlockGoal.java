@@ -41,6 +41,11 @@ public class UniqueBlockGoal extends Goal{
         blockToBuild = config.getProperty("uniqueBlock").getAsInt();
     }
 
+    @Override
+    public String getConfigDisplayValue(Player player) {
+        return "X Blocks";
+    }
+
     // Score = Bridge Length * Unique Blocks * (1 - Max Single Block Percentage)
     // Or ln(u + 1) * x * ( 1 - e^-x )
     @Override

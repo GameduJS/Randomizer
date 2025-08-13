@@ -34,6 +34,11 @@ public class BlockGoal extends Goal {
     }
 
     @Override
+    public String getConfigDisplayValue(Player player) {
+        return getScoreboardGoalValue(player, true);
+    }
+
+    @Override
     public String getScoreboardGoalValue(Player player, boolean initial) {
         return MessageHandler.getString(player, "scoreboardBlockGoalValue", blocksToBuild + "");
     }

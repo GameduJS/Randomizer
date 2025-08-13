@@ -28,8 +28,13 @@ public class TimeGoal extends Goal {
     }
 
     @Override
+    public String getConfigDisplayValue(Player player) {
+        return MessageHandler.getString(player, "scoreboardTimeGoalValue", TimeConverter.getTimeString(this.seconds));
+    }
+
+    @Override
     public String getScoreboardGoalValue(Player player, boolean initial) {
-        int time = seconds - ((initial) ? 0 : gameDispatcher.getSecondsPlayed());
+        int time = seconds - gameDispatcher.getSecondsPlayed();
         return MessageHandler.getString(player, "scoreboardTimeGoalValue", TimeConverter.getTimeString(time));
     }
 

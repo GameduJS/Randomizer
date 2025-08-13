@@ -84,7 +84,7 @@ public enum Option {
                 case "UniqueBlockGoal" -> Material.NETHER_STAR;
                 default -> throw new IllegalStateException("Unexpected value: " + goal.getClass().getSimpleName());
             };
-            return new ItemBuilder(material).translatable(player, "CHANGE_GOAL", goal.getDisplayName(), goal.getScoreboardGoalValue(player, true)).build();
+            return new ItemBuilder(material).translatable(player, "CHANGE_GOAL", goal.getDisplayName(), goal.getConfigDisplayValue(player)).build();
         }
 
         @Override
