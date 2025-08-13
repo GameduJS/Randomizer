@@ -12,12 +12,14 @@ public class PlatformLoader implements Handler {
 
     private final Map<UUID, Platform> playerPlatformLocationMap = new HashMap<>();
 
-    public Platform createPlatform(UUID uuid, int playerCount) {
+    public Platform createPlatform(UUID uuid) {
         if(playerPlatformLocationMap.containsKey(uuid))
             return getPlatform(uuid);
         World world = Objects.requireNonNull(Bukkit.getWorld("world"), "Could not load 'world'");
 
-        int xCoordinate = 7 + 16 * (playerCount - 1);
+        int num = playerPlatformLocationMap.size();
+
+        int xCoordinate = 7 + 16 * (num - 1);
         world.getBlockAt(xCoordinate, 63, 0).setType(Material.BEDROCK);
 
         for(int offX = -1; offX <= 1; ++offX) {

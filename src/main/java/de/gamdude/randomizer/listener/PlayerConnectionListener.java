@@ -42,13 +42,15 @@ public class PlayerConnectionListener implements Listener {
             return;
         }
 
-        Platform platform = platformLoader.createPlatform(player.getUniqueId(), Bukkit.getOnlinePlayers().size());
+        Platform platform = platformLoader.createPlatform(player.getUniqueId());
         platform.setEnabled(true);
         player.teleport(platform.getPlatformLocation());
         gameDispatcher.getRandomizerScoreboard().setScoreboard(player);
 
-       if(gameDispatcher.getState() == 0 && Bukkit.getOperators().size() == 1 && player.isOp())
-           setSettingsItems(player);
+        if( gameDispatcher.getState() == 0 )
+            if( player.isOp() )
+                if ( Bukkit.getOnlinePlayers().stream().filter(Player::isOp).count() < 2 ) // Only one operator can obtain setting items automatically
+                    setSettingsItems(player);
     }
 
     @EventHandler
